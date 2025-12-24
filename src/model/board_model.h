@@ -6,5 +6,6 @@
 extern Cell board_model[8][8];
 
 void init_game();
+void moveTo();
 
 #endif 

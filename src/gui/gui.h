@@ -2,5 +2,6 @@
 #define GUI_H
 
 void open_window(void);
+void updateRender(void);
 
 #endif 

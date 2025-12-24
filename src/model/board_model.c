@@ -2,10 +2,7 @@
 
 Cell board_model[8][8];
 
-const Cell (*getBoard(void))[8] {
-    return board_model; // retourne un pointeur vers le tableau original en lecture seule (à vérifier)
-}
-
+const Cell EMPTY_CELL = (Cell){-1,'\0'};
 
 void init_board() {
     board_model[0][0] = (Cell){1,'r'};
@@ -40,4 +37,11 @@ void init_board() {
 
 void init_game(){
     init_board();
+}
+
+void moveTo(int oX, int oY, int dX, int dY){
+    if (oX<0 || oX>7 || oY<0 || oY>7 || dX<0 || dX>7 || dY<0 || dY>7) return;
+    board_model[dX][dY] = board_model[oX][oY];
+    board_model[oX][oY] = EMPTY_CELL;
+    
 }

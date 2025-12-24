@@ -4,6 +4,7 @@
 #include "gui.h"
 #include "gui_constants.h"
 #include "gui_board/gui_board.h"
+#include "../controller/main_controller.h"
 
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -22,12 +23,11 @@ void handle_board_click(SDL_Event *event) {
         int x = event->button.x;
         int y = event->button.y;
 
-        // Ajuster par rapport à la grille
         int col = (x - BOARD_ORIGIN_X) / BOARD_CELL_SIZE;
         int row = (y - BOARD_ORIGIN_Y) / BOARD_CELL_SIZE;
 
         if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
-            printf("Case cliquée : ligne=%d, colonne=%d\n", row, col);
+            selectCell(row, col);
         }
     }
 }
