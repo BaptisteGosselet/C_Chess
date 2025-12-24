@@ -2,6 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include "../gui_constants.h"
 #include <stdbool.h>
+#include "../../model/board_model.h"
+
 
 bool areTexturesLoaded = false;
 
@@ -54,10 +56,10 @@ void pieces_textures_init(SDL_Renderer *renderer) {
 }
 
 
-void draw_a_piece(SDL_Renderer *renderer, SDL_Texture* piece, int x, int y) {
+void draw_a_piece(SDL_Renderer *renderer, SDL_Texture* piece, int ligne, int col) {
     SDL_Rect dest;
-    dest.x = x * BOARD_CELL_SIZE;
-    dest.y = y * BOARD_CELL_SIZE;
+    dest.x = col * BOARD_CELL_SIZE;
+    dest.y = ligne * BOARD_CELL_SIZE;
     dest.w = BOARD_CELL_SIZE;
     dest.h = BOARD_CELL_SIZE;
     SDL_RenderCopy(renderer, piece, NULL, &dest);
@@ -87,33 +89,48 @@ void draw_board_cells(SDL_Renderer *renderer){
 
 }
 
+void draw_board_pieces_from_model(SDL_Renderer *renderer){
+    for(int i=0; i < 8; i++){
+        for(int j=0; j < 8; j++){
+                if (board_model[i][j].color == 0){
+                    if(board_model[i][j].piece == 'p'){
+                        draw_a_piece(renderer, white_pawn_texture, i, j);
+                    } else if (board_model[i][j].piece == 'r'){
+                        draw_a_piece(renderer, white_rook_texture, i, j);
+                    } else if (board_model[i][j].piece == 'n'){
+                        draw_a_piece(renderer, white_knight_texture, i, j);
+                    } else if (board_model[i][j].piece == 'b'){
+                        draw_a_piece(renderer, white_bishop_texture, i, j);
+                    } else if (board_model[i][j].piece == 'q'){
+                        draw_a_piece(renderer, white_queen_texture, i, j);
+                    } else if (board_model[i][j].piece == 'k'){                        
+                        draw_a_piece(renderer, white_king_texture, i, j);
+                    }
+                }
+                else if (board_model[i][j].color == 1){
+                    if(board_model[i][j].piece == 'p'){
+                        draw_a_piece(renderer, black_pawn_texture, i, j);
+                    } else if (board_model[i][j].piece == 'r'){
+                        draw_a_piece(renderer, black_rook_texture, i, j);
+                    } else if (board_model[i][j].piece == 'n'){
+                        draw_a_piece(renderer, black_knight_texture, i, j);
+                    } else if (board_model[i][j].piece == 'b'){
+                        draw_a_piece(renderer, black_bishop_texture, i, j);
+                    } else if (board_model[i][j].piece == 'q'){
+                        draw_a_piece(renderer, black_queen_texture, i, j);
+                    } else if (board_model[i][j].piece == 'k'){                        
+                        draw_a_piece(renderer, black_king_texture, i, j);
+                    }
+                }
+        }
+    }
+}
+
 void draw_board(SDL_Renderer *renderer){
     if(!areTexturesLoaded){
         pieces_textures_init(renderer);
     }
     draw_board_cells(renderer);
-
-
-    //tmp drawing
-    for(int i=0; i<8;i++){
-            draw_a_piece(renderer, black_pawn_texture, i, 1);
-            draw_a_piece(renderer, white_pawn_texture, i, 6);
-    }
-    draw_a_piece(renderer, black_king_texture, 4, 0);
-    draw_a_piece(renderer, black_queen_texture, 3, 0);
-    draw_a_piece(renderer, white_king_texture, 4, 7);
-    draw_a_piece(renderer, white_queen_texture, 3, 7);
-    draw_a_piece(renderer, black_rook_texture, 0, 0);
-    draw_a_piece(renderer, white_rook_texture, 0, 7);
-    draw_a_piece(renderer, black_rook_texture, 7, 0);
-    draw_a_piece(renderer, white_rook_texture, 7, 7);
-    draw_a_piece(renderer, black_knight_texture, 1, 0);
-    draw_a_piece(renderer, black_knight_texture, 6, 0);
-    draw_a_piece(renderer, white_knight_texture, 6, 7);
-    draw_a_piece(renderer, white_knight_texture, 1, 7);
-    draw_a_piece(renderer, black_bishop_texture, 2, 0);
-    draw_a_piece(renderer, black_bishop_texture, 5, 0);
-    draw_a_piece(renderer, white_bishop_texture, 5, 7);
-    draw_a_piece(renderer, white_bishop_texture, 2, 7);
+    draw_board_pieces_from_model(renderer);
 
 }
