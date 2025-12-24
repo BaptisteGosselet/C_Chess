@@ -11,6 +11,8 @@
 #define WINDOW_Y_POS SDL_WINDOWPOS_UNDEFINED
 #define WINDOW_WIDTH BOARD_SIZE  //TODO ajouter la zone de boutons
 #define WINDOW_HEIGHT BOARD_SIZE //TODO ajouter la zone de boutons
+#define BOARD_ORIGIN_X 0
+#define BOARD_ORIGIN_Y 0
 
 // ** ASSETS SETTINGS **
 #define BOARD_PIECES_REPO "assets/img/pieces/"

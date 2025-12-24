@@ -58,8 +58,8 @@ void pieces_textures_init(SDL_Renderer *renderer) {
 
 void draw_a_piece(SDL_Renderer *renderer, SDL_Texture* piece, int ligne, int col) {
     SDL_Rect dest;
-    dest.x = col * BOARD_CELL_SIZE;
-    dest.y = ligne * BOARD_CELL_SIZE;
+    dest.x = BOARD_ORIGIN_X + col * BOARD_CELL_SIZE;
+    dest.y = BOARD_ORIGIN_Y + ligne * BOARD_CELL_SIZE;
     dest.w = BOARD_CELL_SIZE;
     dest.h = BOARD_CELL_SIZE;
     SDL_RenderCopy(renderer, piece, NULL, &dest);
@@ -78,8 +78,8 @@ void draw_board_cells(SDL_Renderer *renderer){
             }
 
             SDL_Rect rect;
-            rect.x = i*BOARD_CELL_SIZE;   
-            rect.y = j*BOARD_CELL_SIZE;  
+            rect.x = BOARD_ORIGIN_X + i*BOARD_CELL_SIZE;   
+            rect.y = BOARD_ORIGIN_Y + j*BOARD_CELL_SIZE;  
             rect.w = BOARD_CELL_SIZE;   
             rect.h = BOARD_CELL_SIZE;   
 

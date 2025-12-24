@@ -17,6 +17,29 @@ void close_window(void){
     SDL_Quit();
 }
 
+void handle_board_click(SDL_Event *event) {
+    if (event->type == SDL_MOUSEBUTTONDOWN) {
+        int x = event->button.x;
+        int y = event->button.y;
+
+        // Ajuster par rapport à la grille
+        int col = (x - BOARD_ORIGIN_X) / BOARD_CELL_SIZE;
+        int row = (y - BOARD_ORIGIN_Y) / BOARD_CELL_SIZE;
+
+        if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
+            printf("Case cliquée : ligne=%d, colonne=%d\n", row, col);
+        }
+    }
+}
+
+void updateRender(void){
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+    draw_board(renderer);
+    SDL_RenderPresent(renderer);
+}
+
 void open_window(void) {
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -41,13 +64,7 @@ void open_window(void) {
         return;
     }
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
-
-    draw_board(renderer);
-    SDL_RenderPresent(renderer);
-
+    updateRender();
 
     // Boucle d'événements
     SDL_Event event;
@@ -57,6 +74,7 @@ void open_window(void) {
             if (event.type == SDL_QUIT) {  // L'utilisateur ferme la fenêtre
                 running = 0;
             }
+            handle_board_click(&event); 
         }
         SDL_Delay(16); // Petite pause pour ne pas surcharger le CPU (~60 FPS)
     }
