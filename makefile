@@ -1,37 +1,35 @@
-# Compilateur
+# Compilateur et flags
 CC = gcc
-CFLAGS = -Wall -Wextra -I./src/gui
-LDFLAGS = `sdl2-config --cflags --libs` -lSDL2_image  # <-- SDL2 + SDL2_image
+CFLAGS = -Wall -Wextra `sdl2-config --cflags`
+LIBS = `sdl2-config --libs` -lSDL2_image
 
-# Dossiers
-SRC_DIR = src
-GUI_DIR = $(SRC_DIR)/gui
-OBJ_DIR = obj
+# Dossier de compilation des objets
+OBJDIR = obj
 
-# Fichiers
-SRCS = $(SRC_DIR)/main.c $(GUI_DIR)/gui.c
-OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/gui.o
-TARGET = ./c_chess
+# Trouve tous les .c dans src/ et sous-dossiers
+SRCS = $(shell find src -name '*.c')
 
-# Règles par défaut
+# Remplace .c par .o et ajoute le dossier obj/
+OBJS = $(patsubst src/%.c, $(OBJDIR)/%.o, $(SRCS))
+
+# Nom de l'exécutable
+TARGET = c_chess
+
+# Règle principale
 all: $(TARGET)
 
-# Création de l'exécutable
+# Linker tous les objets
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+	@mkdir -p $(dir $(OBJS))
+	$(CC) $(OBJS) -o $@ $(LIBS)
 
-# Compilation des objets pour src
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Compilation des objets pour src/gui
-$(OBJ_DIR)/%.o: $(SRC_DIR)/gui/%.c
-	@mkdir -p $(OBJ_DIR)
+# Compilation des .c en .o
+$(OBJDIR)/%.o: src/%.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Nettoyage
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET)
+	rm -rf $(OBJDIR) $(TARGET)
 
 .PHONY: all clean
