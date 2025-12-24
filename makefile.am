@@ -1,0 +1,12 @@
+bin_PROGRAMS = c_chess
+c_chess_SOURCES = src/main.c
+
+# Flags compilateur et linker spécifiques au programme
+c_chess_CPPFLAGS = @SDL2_CFLAGS@
+c_chess_LDADD    = @SDL2_LIBS@
+
+maintainer-clean-local:
+	rm -rf */.deps *.o c_chess
+	rm -f configure~
+	rm -rf autom4te.cache aclocal.m4 configure Makefile.in \
+	       compile install-sh missing depcomp

@@ -1,6 +1,0 @@
-bin_PROGRAMS = c_chess
-c_chess_SOURCES = main.c
-
-maintainer-clean-local:
-	rm -rf autom4te.cache aclocal.m4 configure Makefile.in \
-	       compile install-sh missing depcomp INSTALL COPYING .deps *.o c_chess
