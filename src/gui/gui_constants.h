@@ -11,4 +11,7 @@
 #define WINDOW_WIDTH BOARD_SIZE  //TODO ajouter la zone de boutons
 #define WINDOW_HEIGHT BOARD_SIZE //TODO ajouter la zone de boutons
 
+#define BOARD_PIECES_REPO "assets/img/pieces/"
+#define BOARD_PIECES_FILE_FORMAT ".svg"
+
 #endif

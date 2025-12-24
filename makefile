@@ -1,7 +1,7 @@
 # Compilateur
 CC = gcc
 CFLAGS = -Wall -Wextra -I./src/gui
-LDFLAGS = `sdl2-config --cflags --libs`  # <-- lien SDL2 automatique
+LDFLAGS = `sdl2-config --cflags --libs` -lSDL2_image  # <-- SDL2 + SDL2_image
 
 # Dossiers
 SRC_DIR = src
@@ -20,11 +20,12 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
-# Compilation des objets
+# Compilation des objets pour src
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Compilation des objets pour src/gui
 $(OBJ_DIR)/%.o: $(SRC_DIR)/gui/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
