@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include "gui.h"
+#include "gui/gui.h"
 
-int main() {
+int main(void) {
     open_window();
     return 0;
 }

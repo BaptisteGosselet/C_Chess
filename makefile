@@ -1,37 +1,36 @@
-# Nom du binaire
-BIN = c_chess
-
-# Répertoire des sources
-SRC_DIR = src
-
-# Trouver tous les fichiers .c dans src
-SRC = $(wildcard $(SRC_DIR)/*.c)
-
-# Objets correspondants
-OBJ = $(SRC:.c=.o)
-
-# Flags SDL2
-CFLAGS = $(shell sdl2-config --cflags)
-LDFLAGS = $(shell sdl2-config --libs)
-
 # Compilateur
-CC = cc
+CC = gcc
+CFLAGS = -Wall -Wextra -I./src/gui
+LDFLAGS = `sdl2-config --cflags --libs`  # <-- lien SDL2 automatique
 
-# Règle par défaut
-all: $(BIN)
+# Dossiers
+SRC_DIR = src
+GUI_DIR = $(SRC_DIR)/gui
+OBJ_DIR = obj
 
-# Lien du binaire
-$(BIN): $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS)
+# Fichiers
+SRCS = $(SRC_DIR)/main.c $(GUI_DIR)/gui.c
+OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/gui.o
+TARGET = ./c_chess
 
-# Compilation des fichiers .c en .o
-%.o: %.c
-	$(CC) -c $< -o $@ $(CFLAGS)
+# Règles par défaut
+all: $(TARGET)
+
+# Création de l'exécutable
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+
+# Compilation des objets
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/gui/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Nettoyage
 clean:
-	rm -f $(OBJ) $(BIN)
+	rm -rf $(OBJ_DIR) $(TARGET)
 
-distclean: clean
-	rm -rf configure~ autom4te.cache aclocal.m4 Makefile.in \
-	       compile install-sh missing depcomp
+.PHONY: all clean
