@@ -1,7 +1,8 @@
-#include <stdio.h>
-#include "gui.h"
+#include "gui/gui.h"
+#include "model/board_model.h"
 
-int main() {
+int main(void) {
+    init_game();
     open_window();
     return 0;
 }
