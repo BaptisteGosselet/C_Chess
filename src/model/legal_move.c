@@ -36,29 +36,49 @@ void addMoveToList(int fromX, int fromY, int toX, int toY, int promotion){
 void listPawnMoves(int oI, int oJ, Color color){
 
     if(color == COLOR_WHITE){
+        if(oI == 6
+            && (oI-2)>=0 
+            && board_model[oI-1][oJ].piece == EMPTY_CELL.piece
+            && board_model[oI-2][oJ].piece == EMPTY_CELL.piece){ 
+            addMoveToList(oI, oJ, oI-2, oJ, 0);
+        }
+
         if((oI-1)>=0 && board_model[oI-1][oJ].piece == EMPTY_CELL.piece){ 
             addMoveToList(oI, oJ, oI-1, oJ, 0);
         }
+
+        if((oI-1)>=0 && (oJ-1)>=0 && board_model[oI-1][oJ-1].color == COLOR_BLACK){ 
+            addMoveToList(oI, oJ, oI-1, oJ-1, 0);
+        }
+        if((oI-1)>=0 && (oJ+1)<=7 && board_model[oI-1][oJ+1].color == COLOR_BLACK){ 
+            addMoveToList(oI, oJ, oI-1, oJ+1, 0);
+        }
+
     }
     else if(color == COLOR_BLACK){
+        if(oI == 1
+            && (oI+2)<=7 
+            && board_model[oI+1][oJ].piece == EMPTY_CELL.piece
+            && board_model[oI+2][oJ].piece == EMPTY_CELL.piece){ 
+            addMoveToList(oI, oJ, oI+2, oJ, 0);
+        }
+
         if((oI+1)<=7 && board_model[oI+1][oJ].piece == EMPTY_CELL.piece){ 
             addMoveToList(oI, oJ, oI+1, oJ, 0);
         }
+
+        if((oI+1)<=7 && (oJ-1)>=0 && board_model[oI+1][oJ-1].color == COLOR_WHITE){ 
+            addMoveToList(oI, oJ, oI+1, oJ-1, 0);
+        }
+        if((oI+1)<=7 && (oJ+1)<=7 && board_model[oI+1][oJ+1].color == COLOR_WHITE){ 
+            addMoveToList(oI, oJ, oI+1, oJ+1, 0);
+        }
     }
     
-    
-    
-    // black
-    // todo : 2 cases au départ
     // todo : en passant
-    // todo : capture
 }
 
 /*
-void kingmoves
-// roque = la case n'est pas dans legalMoves(inv(color)) 
-// et il n'a pas déjà été produit par cette couleur
-
 void listBishopMoves(int oI, int oJ, int color, MoveList *list){
 
     // coups diagonale HG
@@ -90,7 +110,17 @@ void listRookMoves(int oI, int oJ, int color, MoveList *list){
 listQueenMoves(int oI, int oJ, int color, MoveList *list){
     // list tour + list fou
 }
+
+
+void kingmoves
+// = une reine en plus simple
+// case sur echec
+// roque = la case n'est pas dans legalMoves(inv(color)) 
+// et il n'a pas déjà été produit par cette couleur
+
 */
+
+
 
 /**
  * Empty the moves list
