@@ -7,6 +7,7 @@ const Cell EMPTY_CELL = (Cell){COLOR_EMPTY, PIECE_NONE};
 
 Cell board_model[8][8];
 Color currentColor;
+MoveList currentLegalMovesList;
 
 
 void init_board() {
@@ -49,7 +50,7 @@ void changeColorTurn(){
 }
 
 void updateLegalMoves(){
-    updateAllLegalMoves(currentColor);
+    updateAllLegalMoves(currentColor, &currentLegalMovesList);
 }
 
 void init_game(){

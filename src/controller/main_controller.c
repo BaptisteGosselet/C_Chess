@@ -22,7 +22,7 @@ void playSelectedCells(int oI, int oJ, int dI, int dJ){
             .promotion = 0 //todo (if pawn && i/j = 0/8) : ask prom
         };
 
-    if (!isThisMoveLegal(wantedMove)) {
+    if (!isThisMoveLegal(wantedMove, &currentLegalMovesList)) {
         printf("Move illegal\n");
         resetSelectedCell();
         return;

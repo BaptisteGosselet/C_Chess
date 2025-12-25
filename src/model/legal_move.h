@@ -4,7 +4,7 @@
 #include "move.h"
 #include <stdbool.h>
 
-bool isThisMoveLegal(Move wantedMove);
-void updateAllLegalMoves(int color);
+bool isThisMoveLegal(Move wantedMove, MoveList* movesList);
+void updateAllLegalMoves(int color, MoveList* movesList);
 
 #endif 

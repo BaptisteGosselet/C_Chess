@@ -7,9 +7,11 @@
 
 extern Cell board_model[8][8];
 extern const Cell EMPTY_CELL;
+extern MoveList currentLegalMovesList;
 
 
 void init_game();
 void moveTo();
+
 
 #endif 
