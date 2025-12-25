@@ -123,6 +123,45 @@ void listQueenMoves(int oI, int oJ, Color color, MoveList* movesList){
     listBishopMoves(oI, oJ, color, movesList);
 }
 
+void listKingCastleMove(int oI, int oJ, Color color, MoveList* movesList) {
+    if(color == COLOR_WHITE && !whiteKingHasMoved) {
+        // Petit roque (côté roi)
+        if(!whiteRookKHasMoved 
+           && board_model[oI][oJ+3].piece == PIECE_ROOK && board_model[oI][oJ+3].color == COLOR_WHITE // tour à sa place
+           && board_model[oI][oJ+1].piece == EMPTY_CELL.piece 
+           && board_model[oI][oJ+2].piece == EMPTY_CELL.piece) {
+            addMoveToList(oI, oJ, oI, oJ+2, 0, movesList);
+        }
+        // Grand roque (côté dame)
+        if(!whiteRookQHasMoved
+           && board_model[oI][oJ-4].piece == PIECE_ROOK && board_model[oI][oJ-4].color == COLOR_WHITE // tour à sa place
+           && board_model[oI][oJ-1].piece == EMPTY_CELL.piece 
+           && board_model[oI][oJ-2].piece == EMPTY_CELL.piece 
+           && board_model[oI][oJ-3].piece == EMPTY_CELL.piece) {
+            addMoveToList(oI, oJ, oI, oJ-2, 0, movesList);
+        }
+    }
+
+    if(color == COLOR_BLACK && !blackKingHasMoved) {
+        // Petit roque (côté roi)
+        if(!blackRookKHasMoved
+           && board_model[oI][oJ+3].piece == PIECE_ROOK && board_model[oI][oJ+3].color == COLOR_BLACK
+           && board_model[oI][oJ+1].piece == EMPTY_CELL.piece 
+           && board_model[oI][oJ+2].piece == EMPTY_CELL.piece) {
+            addMoveToList(oI, oJ, oI, oJ+2, 0, movesList);
+        }
+        // Grand roque (côté dame)
+        if(!blackRookQHasMoved
+           && board_model[oI][oJ-4].piece == PIECE_ROOK && board_model[oI][oJ-4].color == COLOR_BLACK
+           && board_model[oI][oJ-1].piece == EMPTY_CELL.piece 
+           && board_model[oI][oJ-2].piece == EMPTY_CELL.piece 
+           && board_model[oI][oJ-3].piece == EMPTY_CELL.piece) {
+            addMoveToList(oI, oJ, oI, oJ-2, 0, movesList);
+        }
+    }
+}
+
+
 /**
  * Liste les mouvements du roi
  */
@@ -137,7 +176,8 @@ void listKingMoves(int oI, int oJ, Color color, MoveList* movesList){
         }
     }
 
-    // TODO : roque
+    listKingCastleMove(oI, oJ, color, movesList);
+
     // TODO : gestion des échecs
 }
 

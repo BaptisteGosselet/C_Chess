@@ -2,6 +2,7 @@
 #include "pieces_type.h"
 #include "move.h"
 #include "legal_move.h"
+#include <stdio.h>
 #include <stdbool.h>
 
 const Cell EMPTY_CELL = (Cell){COLOR_EMPTY, PIECE_NONE};
@@ -111,11 +112,51 @@ void checkMoveIndicator(int oX, int oY){
 
 }
 
+void handleCastleRook(int oY, int dX, int dY){
+    if (board_model[dX][dY].piece == PIECE_KING){
+        //Petit roque
+        if(dY-oY==2){
+            printf("ZZZZZ");
+            board_model[dX][dY-1] = board_model[dX][dY+1];
+            board_model[dX][dY+1] = EMPTY_CELL;  
+            if(board_model[dX][dY].color == COLOR_WHITE){
+                whiteRookKHasMoved = true;
+                whiteKingHasMoved = true;
+                whiteCastle = true;
+            }   
+            else if(board_model[dX][dY].color == COLOR_BLACK){
+                blackRookKHasMoved = true;
+                blackKingHasMoved = true;
+                blackCastle = true;
+            }   
+        } 
+    
+        // Grand roque
+        else if(oY - dY == 2){
+            printf("\nGRAND ROQUE\n");
+            board_model[dX][dY+1] = board_model[dX][dY-2];
+            board_model[dX][dY-2] = EMPTY_CELL;
+
+            if(board_model[dX][dY].color == COLOR_WHITE){
+                whiteRookQHasMoved = true;
+                whiteKingHasMoved = true;
+                whiteCastle = true;
+            }   
+            else if(board_model[dX][dY].color == COLOR_BLACK){
+                blackRookQHasMoved = true;
+                blackKingHasMoved = true;
+                blackCastle = true;
+            }   
+        }    
+    }
+}
+
 void moveTo(int oX, int oY, int dX, int dY){
     if (oX<0 || oX>7 || oY<0 || oY>7 || dX<0 || dX>7 || dY<0 || dY>7) return;
-    board_model[dX][dY] = board_model[oX][oY];
-    board_model[oX][oY] = EMPTY_CELL;   
     checkMoveIndicator(oX, oY);
+    board_model[dX][dY] = board_model[oX][oY];
+    board_model[oX][oY] = EMPTY_CELL;       
+    handleCastleRook(oY, dX, dY);
     changeColorTurn();
     updateLegalMoves();
 }
