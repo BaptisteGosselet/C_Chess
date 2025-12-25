@@ -3,6 +3,7 @@
 #include "../gui_constants.h"
 #include <stdbool.h>
 #include "../../model/board_model.h"
+#include "../../model/pieces_type.h"
 
 
 bool areTexturesLoaded = false;
@@ -93,32 +94,32 @@ void draw_board_pieces_from_model(SDL_Renderer *renderer){
     for(int i=0; i < 8; i++){
         for(int j=0; j < 8; j++){
                 if (board_model[i][j].color == 0){
-                    if(board_model[i][j].piece == 'p'){
+                    if(board_model[i][j].piece == PIECE_PAWN){
                         draw_a_piece(renderer, white_pawn_texture, i, j);
-                    } else if (board_model[i][j].piece == 'r'){
+                    } else if (board_model[i][j].piece == PIECE_ROOK){
                         draw_a_piece(renderer, white_rook_texture, i, j);
-                    } else if (board_model[i][j].piece == 'n'){
+                    } else if (board_model[i][j].piece == PIECE_KNIGHT){
                         draw_a_piece(renderer, white_knight_texture, i, j);
-                    } else if (board_model[i][j].piece == 'b'){
+                    } else if (board_model[i][j].piece == PIECE_BISHOP){
                         draw_a_piece(renderer, white_bishop_texture, i, j);
-                    } else if (board_model[i][j].piece == 'q'){
+                    } else if (board_model[i][j].piece == PIECE_QUEEN){
                         draw_a_piece(renderer, white_queen_texture, i, j);
-                    } else if (board_model[i][j].piece == 'k'){                        
+                    } else if (board_model[i][j].piece == PIECE_KING){                        
                         draw_a_piece(renderer, white_king_texture, i, j);
                     }
                 }
                 else if (board_model[i][j].color == 1){
-                    if(board_model[i][j].piece == 'p'){
+                    if(board_model[i][j].piece == PIECE_PAWN){
                         draw_a_piece(renderer, black_pawn_texture, i, j);
-                    } else if (board_model[i][j].piece == 'r'){
+                    } else if (board_model[i][j].piece == PIECE_ROOK){
                         draw_a_piece(renderer, black_rook_texture, i, j);
-                    } else if (board_model[i][j].piece == 'n'){
+                    } else if (board_model[i][j].piece == PIECE_KNIGHT){
                         draw_a_piece(renderer, black_knight_texture, i, j);
-                    } else if (board_model[i][j].piece == 'b'){
+                    } else if (board_model[i][j].piece == PIECE_BISHOP){
                         draw_a_piece(renderer, black_bishop_texture, i, j);
-                    } else if (board_model[i][j].piece == 'q'){
+                    } else if (board_model[i][j].piece == PIECE_QUEEN){
                         draw_a_piece(renderer, black_queen_texture, i, j);
-                    } else if (board_model[i][j].piece == 'k'){                        
+                    } else if (board_model[i][j].piece == PIECE_KING){                        
                         draw_a_piece(renderer, black_king_texture, i, j);
                     }
                 }
