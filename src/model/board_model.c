@@ -2,12 +2,22 @@
 #include "pieces_type.h"
 #include "move.h"
 #include "legal_move.h"
+#include <stdbool.h>
 
 const Cell EMPTY_CELL = (Cell){COLOR_EMPTY, PIECE_NONE};
 
 Cell board_model[8][8];
 Color currentColor;
 MoveList currentLegalMovesList;
+bool whiteKingHasMoved;
+bool whiteRookKHasMoved;
+bool whiteRookQHasMoved;
+bool whiteCastle;
+bool blackKingHasMoved;
+bool blackRookKHasMoved;
+bool blackRookQHasMoved;
+bool blackCastle;
+
 
 
 void init_board() {
@@ -55,14 +65,57 @@ void updateLegalMoves(){
 
 void init_game(){
     currentColor = COLOR_WHITE;
+
+    whiteKingHasMoved = false;
+    whiteRookKHasMoved = false;
+    whiteRookQHasMoved = false;
+    whiteCastle = false;
+    blackKingHasMoved = false;
+    blackRookKHasMoved = false;
+    blackRookQHasMoved = false;
+    blackCastle = false;
+
     init_board();
     updateLegalMoves();
+}
+
+void checkMoveIndicator(int oX, int oY){
+    if (board_model[oX][oY].piece == PIECE_KING) {
+        if (currentColor == COLOR_WHITE){
+            whiteKingHasMoved = true;
+        }
+        else if (currentColor == COLOR_BLACK){
+            blackKingHasMoved = true;
+        }
+    }
+    else if (board_model[oX][oY].piece == PIECE_ROOK) {
+        if (oY == 0) {
+            if (currentColor == COLOR_WHITE){
+                whiteRookQHasMoved = true;
+            }
+            else if (currentColor == COLOR_BLACK){
+                blackRookQHasMoved = true;
+            }
+        }
+        else if (oY == 7) {
+            if (currentColor == COLOR_WHITE){
+                whiteRookKHasMoved = true;
+            }
+            else if (currentColor == COLOR_BLACK){
+                blackRookKHasMoved = true;
+            }
+        }
+    }
+
+
+
 }
 
 void moveTo(int oX, int oY, int dX, int dY){
     if (oX<0 || oX>7 || oY<0 || oY>7 || dX<0 || dX>7 || dY<0 || dY>7) return;
     board_model[dX][dY] = board_model[oX][oY];
     board_model[oX][oY] = EMPTY_CELL;   
+    checkMoveIndicator(oX, oY);
     changeColorTurn();
     updateLegalMoves();
 }
