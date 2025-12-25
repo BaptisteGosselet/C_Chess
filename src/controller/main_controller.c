@@ -25,6 +25,7 @@ void playSelectedCells(int oI, int oJ, int dI, int dJ){
     if (!isThisMoveLegal(wantedMove, &currentLegalMovesList)) {
         printf("Move illegal\n");
         resetSelectedCell();
+        updateRender();
         return;
     }
 

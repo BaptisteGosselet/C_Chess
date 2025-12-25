@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "../../model/board_model.h"
 #include "../../model/pieces_type.h"
-
+#include "../../controller/main_controller.h"
 
 bool areTexturesLoaded = false;
 
@@ -66,6 +66,16 @@ void draw_a_piece(SDL_Renderer *renderer, SDL_Texture* piece, int ligne, int col
     SDL_RenderCopy(renderer, piece, NULL, &dest);
 }
 
+void draw_highlight_cell(int i, int j, SDL_Renderer *renderer){
+    SDL_SetRenderDrawColor(renderer, 130, 151, 105, 255);
+    SDL_Rect rect;
+    rect.x = BOARD_ORIGIN_X + j*BOARD_CELL_SIZE;   
+    rect.y = BOARD_ORIGIN_Y + i*BOARD_CELL_SIZE;  
+    rect.w = BOARD_CELL_SIZE;   
+    rect.h = BOARD_CELL_SIZE;   
+    SDL_RenderFillRect(renderer, &rect);
+}
+
 void draw_board_cells(SDL_Renderer *renderer){
     
     for(int i=0; i<8; i++){
@@ -87,7 +97,6 @@ void draw_board_cells(SDL_Renderer *renderer){
             SDL_RenderFillRect(renderer, &rect);
         }
     }
-
 }
 
 void draw_board_pieces_from_model(SDL_Renderer *renderer){
@@ -132,6 +141,11 @@ void draw_board(SDL_Renderer *renderer){
         pieces_textures_init(renderer);
     }
     draw_board_cells(renderer);
+
+    if(selectedCell[0]!=-1 && selectedCell[1]!=-1){
+        draw_highlight_cell(selectedCell[0], selectedCell[1], renderer);
+    }
+
     draw_board_pieces_from_model(renderer);
 
 }
