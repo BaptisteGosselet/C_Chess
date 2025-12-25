@@ -1,5 +1,6 @@
 #include "move.h"
 #include "board_model.h"
+#include "pieces_type.h"
 #include "color.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -78,48 +79,146 @@ void listPawnMoves(int oI, int oJ, Color color){
     // todo : en passant
 }
 
-/*
-void listBishopMoves(int oI, int oJ, int color, MoveList *list){
+void listRookMoves(int oI, int oJ, Color color){
 
-    // coups diagonale HG
-    // coups diagonale HD
-    // coups diagonale BG
-    // coups diagonale BD
+    // Haut
+    for(int i = oI-1; i >= 0; i--){
+        if(board_model[i][oJ].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, i, oJ, 0);
+        } else {
+            if(board_model[i][oJ].color != color){
+                addMoveToList(oI, oJ, i, oJ, 0); 
+            }
+            break; 
+        }
+    }
+
+    // Bas
+    for(int i = oI+1; i <= 7; i++){
+        if(board_model[i][oJ].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, i, oJ, 0);
+        } else {
+            if(board_model[i][oJ].color != color){
+                addMoveToList(oI, oJ, i, oJ, 0);
+            }
+            break;
+        }
+    }
+
+    // Gauche
+    for(int j = oJ-1; j >= 0; j--){
+        if(board_model[oI][j].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, oI, j, 0);
+        } else {
+            if(board_model[oI][j].color != color){
+                addMoveToList(oI, oJ, oI, j, 0); 
+            }
+            break;
+        }
+    }
+
+    // Droite
+    for(int j = oJ+1; j <= 7; j++){
+        if(board_model[oI][j].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, oI, j, 0);
+        } else {
+            if(board_model[oI][j].color != color){
+                addMoveToList(oI, oJ, oI, j, 0); 
+            }
+            break;
+        }
+    }
 }
 
-void listRookMoves(int oI, int oJ, int color, MoveList *list){
-        
-    // Up moves
-    for(int i=0; i<8; i++){}
+void listBishopMoves(int oI, int oJ, Color color){
+    // Diagonale Haut-Gauche
+    for(int i = oI-1, j = oJ-1; i >= 0 && j >= 0; i--, j--){
+        if(board_model[i][j].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, i, j, 0);
+        } else {
+            if(board_model[i][j].color != color){
+                addMoveToList(oI, oJ, i, j, 0); // capture
+            }
+            break;
+        }
+    }
 
-    Move move = {
-        .fromX = 0,
-        .fromY = 0,
-        .toX = 0,
-        .toY = 0,
-        .promotion = 0
+    // Diagonale Haut-Droite
+    for(int i = oI-1, j = oJ+1; i >= 0 && j <= 7; i--, j++){
+        if(board_model[i][j].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, i, j, 0);
+        } else {
+            if(board_model[i][j].color != color){
+                addMoveToList(oI, oJ, i, j, 0);
+            }
+            break;
+        }
+    }
+
+    // Diagonale Bas-Gauche
+    for(int i = oI+1, j = oJ-1; i <= 7 && j >= 0; i++, j--){
+        if(board_model[i][j].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, i, j, 0);
+        } else {
+            if(board_model[i][j].color != color){
+                addMoveToList(oI, oJ, i, j, 0);
+            }
+            break;
+        }
+    }
+
+    // Diagonale Bas-Droite
+    for(int i = oI+1, j = oJ+1; i <= 7 && j <= 7; i++, j++){
+        if(board_model[i][j].piece == EMPTY_CELL.piece){
+            addMoveToList(oI, oJ, i, j, 0);
+        } else {
+            if(board_model[i][j].color != color){
+                addMoveToList(oI, oJ, i, j, 0);
+            }
+            break;
+        }
+    }
+}
+
+void listQueenMoves(int oI, int oJ, Color color){
+    listRookMoves(oI, oJ, color);  
+    listBishopMoves(oI, oJ, color);  
+}
+
+void listKingMoves(int oI, int oJ, Color color){
+    for(int i = oI-1; i <= oI+1; i++){
+        for(int j = oJ-1; j <= oJ+1; j++){
+            if(i >= 0 && i <= 7 && j >= 0 && j <= 7 && !(i == oI && j == oJ)){
+                if(board_model[i][j].piece == EMPTY_CELL.piece || board_model[i][j].color != color){
+                    addMoveToList(oI, oJ, i, j, 0);
+                }
+            }
+        }
+    }
+
+    // TODO : roques, 
+    // TODO : gestion des echecs
+}
+
+void listKnightMoves(int oI, int oJ, Color color){
+    int moves[8][2] = {
+        {-2, -1}, {-2, +1},
+        {-1, -2}, {-1, +2},
+        {+1, -2}, {+1, +2},
+        {+2, -1}, {+2, +1}
     };
-    // coups à gauche
-    // coups à droite
-    // coups en haut
-    // coups en bas
 
-    list->moves[list->count++] = move;
+    for(int k = 0; k < 8; k++){
+        int i = oI + moves[k][0];
+        int j = oJ + moves[k][1];
+
+        if(i >= 0 && i <= 7 && j >= 0 && j <= 7){
+            if(board_model[i][j].piece == EMPTY_CELL.piece || board_model[i][j].color != color){
+                addMoveToList(oI, oJ, i, j, 0);
+            }
+        }
+    }
 }
-
-listQueenMoves(int oI, int oJ, int color, MoveList *list){
-    // list tour + list fou
-}
-
-
-void kingmoves
-// = une reine en plus simple
-// case sur echec
-// roque = la case n'est pas dans legalMoves(inv(color)) 
-// et il n'a pas déjà été produit par cette couleur
-
-*/
-
 
 
 /**
@@ -147,12 +246,26 @@ void updateAllLegalMoves(Color color) {
             }
 
             if(board_model[i][j].color == color){
-                listPawnMoves(i, j, color);
-                /*
-                if(board_model[i][j].piece == ){
-
+                
+                
+                if(board_model[i][j].piece == PIECE_ROOK){
+                    listRookMoves(i, j, color);
                 }
-                */
+                else if(board_model[i][j].piece == PIECE_BISHOP){
+                    listBishopMoves(i, j, color);
+                }
+                else if(board_model[i][j].piece == PIECE_KNIGHT){
+                    listKnightMoves(i, j, color);
+                }
+                else if(board_model[i][j].piece == PIECE_QUEEN){
+                    listQueenMoves(i, j, color);
+                }
+                else if(board_model[i][j].piece == PIECE_KING){
+                    listKingMoves(i, j, color);
+                }
+                else if(board_model[i][j].piece == PIECE_PAWN){
+                    listPawnMoves(i, j, color);
+                }
             }
         }
     }
