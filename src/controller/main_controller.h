@@ -1,7 +1,13 @@
 #ifndef MAIN_CONTROLLER_H
 #define MAIN_CONTROLLER_H
 
-extern int selectedCell[2];
+#include "../model/position.h"
+
+void controllerInit(Position *pos);
 void selectCell(int i, int j);
 
-#endif 
+const Position* controllerGetPosition(void);
+const int* controllerGetSelectedCell(void);
+
+
+#endif
