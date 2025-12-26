@@ -99,7 +99,7 @@ static void checkMoveIndicator(Position *pos, int oI, int oJ, int dI, int dJ) {
             }
         } else {
             if (oI == 1 && dI == 3) {
-                pos->blackPushedPawn = oJ; 
+                pos->blackPushedPawn = dJ; 
             }
         }
     }
@@ -121,7 +121,7 @@ static void handleCastleRook(Position *pos, int oY, int dX, int dY) {
     }
 }
 
-void handleEnPassant(Position *pos, int oI, int oJ, int dI, int dJ) {
+void handleEnPassant(Position *pos, int oJ, int dI, int dJ) {
     Cell moved = pos->board_model[dI][dJ];
 
     if (moved.piece != PIECE_PAWN)
@@ -129,13 +129,32 @@ void handleEnPassant(Position *pos, int oI, int oJ, int dI, int dJ) {
 
     if(oJ != dJ){
         if (moved.color == COLOR_WHITE){
-            pos->board_model[dI+1][dJ] = EMPTY_CELL;
+            if(
+                pos->board_model[dI+1][dJ].piece == PIECE_PAWN 
+                && pos->board_model[dI+1][dJ].color == COLOR_BLACK){
+                    pos->board_model[dI+1][dJ] = EMPTY_CELL;
+                }
         }
         else if (moved.color == COLOR_BLACK){
-            pos->board_model[dI-1][dJ] = EMPTY_CELL;
+            if(
+                pos->board_model[dI-1][dJ].piece == PIECE_PAWN 
+                && pos->board_model[dI-1][dJ].color == COLOR_WHITE){
+                    pos->board_model[dI-1][dJ] = EMPTY_CELL;
+                }
         }
     }
 
+}
+
+void handlePromotion(Position *pos, int dI, int dJ) {
+    Cell moved = pos->board_model[dI][dJ];
+
+    if (moved.piece == PIECE_PAWN && moved.color == COLOR_WHITE && dI == 0){
+        pos->board_model[dI][dJ] = (Cell){COLOR_WHITE, PIECE_QUEEN};
+    }
+    if (moved.piece == PIECE_PAWN && moved.color == COLOR_BLACK && dI == 7){
+        pos->board_model[dI][dJ] = (Cell){COLOR_BLACK, PIECE_QUEEN};
+    }
 }
 
 void moveTo(Position *pos, int oX, int oY, int dX, int dY) {
@@ -149,7 +168,8 @@ void moveTo(Position *pos, int oX, int oY, int dX, int dY) {
     pos->board_model[oX][oY] = EMPTY_CELL;
 
     handleCastleRook(pos, oY, dX, dY);
-    handleEnPassant(pos, oX, oY, dX, dY);
+    handleEnPassant(pos, oY, dX, dY);
+    handlePromotion(pos, dX, dY);
 
     changeColorTurn(pos);
     updateLegalMoves(pos);
