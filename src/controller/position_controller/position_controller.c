@@ -1,5 +1,5 @@
-#include "position.h"
-#include "../controller/legal_move/legal_move.h"
+#include "../../model/position.h"
+#include "../legal_move/legal_move.h"
 #include <stdio.h>
 
 void init_board(Position *pos) {
@@ -35,6 +35,13 @@ void init_board(Position *pos) {
     pos->board_model[7][7] = (Cell){COLOR_WHITE, PIECE_ROOK};
 }
 
+void updateLegalMoves(Position *pos) {
+    updateAllLegalMoves(
+        pos,
+        pos->currentColor,
+        &pos->currentLegalMovesList
+    );
+}
 
 void init_game(Position *pos) {
     pos->currentColor = COLOR_WHITE;
@@ -56,14 +63,6 @@ void changeColorTurn(Position *pos) {
     pos->currentColor = (pos->currentColor == COLOR_WHITE)
                             ? COLOR_BLACK
                             : COLOR_WHITE;
-}
-
-void updateLegalMoves(Position *pos) {
-    updateAllLegalMoves(
-        pos,
-        pos->currentColor,
-        &pos->currentLegalMovesList
-    );
 }
 
 static void checkMoveIndicator(Position *pos, int oI, int oJ, int dI, int dJ) {
@@ -121,6 +120,10 @@ static void handleCastleRook(Position *pos, int oY, int dX, int dY) {
     }
 }
 
+PieceType askForAPiece(){
+    return PIECE_QUEEN;
+}
+
 void handleEnPassant(Position *pos, int oJ, int dI, int dJ) {
     Cell moved = pos->board_model[dI][dJ];
 
@@ -143,17 +146,21 @@ void handleEnPassant(Position *pos, int oJ, int dI, int dJ) {
                 }
         }
     }
+}
 
+PieceType askAPieceToPromoteTo(){
+    //TODO : human / AI
+    return PIECE_QUEEN;
 }
 
 void handlePromotion(Position *pos, int dI, int dJ) {
     Cell moved = pos->board_model[dI][dJ];
 
     if (moved.piece == PIECE_PAWN && moved.color == COLOR_WHITE && dI == 0){
-        pos->board_model[dI][dJ] = (Cell){COLOR_WHITE, PIECE_QUEEN};
+        pos->board_model[dI][dJ] = (Cell){COLOR_WHITE, askAPieceToPromoteTo()};
     }
     if (moved.piece == PIECE_PAWN && moved.color == COLOR_BLACK && dI == 7){
-        pos->board_model[dI][dJ] = (Cell){COLOR_BLACK, PIECE_QUEEN};
+        pos->board_model[dI][dJ] = (Cell){COLOR_BLACK, askAPieceToPromoteTo()};
     }
 }
 

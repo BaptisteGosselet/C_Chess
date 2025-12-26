@@ -1,5 +1,6 @@
 #include "../gui/gui.h"
 #include "../model/position.h"
+#include "position_controller/position_controller.h"
 #include "../model/move.h"
 #include "legal_move/legal_move.h"
 #include <stdio.h>
