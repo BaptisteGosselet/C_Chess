@@ -1,8 +1,11 @@
 #include "gui/gui.h"
-#include "model/board_model.h"
+#include "model/position.h"
+#include "controller/main_controller.h"
 
 int main(void) {
-    init_game();
-    open_window();
+    Position game;
+    init_game(&game);         
+    controllerInit(&game);     
+    open_window();            
     return 0;
 }
