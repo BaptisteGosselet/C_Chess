@@ -13,26 +13,27 @@
 int countAttacksOnSquare(const Position *pos, int x, int y, Color byColor) {
     int count = 0;
 
-    for(int i=0; i<8; i++){
-        for(int j=0; j<8; j++){
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
             Cell cell = pos->board_model[i][j];
-            if(cell.color != byColor) continue;
+            if (cell.color != byColor) continue;
 
-            switch(cell.piece){
+            switch(cell.piece) {
                 case PIECE_PAWN: {
                     int dir = (byColor == COLOR_WHITE) ? -1 : 1;
-                    for(int dj=-1; dj<=1; dj+=2){
+                    for(int dj = -1; dj <= 1; dj += 2) {
                         int nx = i + dir;
                         int ny = j + dj;
-                        if(nx==x && ny==y) count++;
+                        if(nx == x && ny == y) count++;
                     }
                     break;
                 }
                 case PIECE_KNIGHT: {
                     int offsets[8][2] = {{-2,-1},{-2,1},{-1,-2},{-1,2},{1,-2},{1,2},{2,-1},{2,1}};
-                    for(int k=0;k<8;k++){
-                        int nx=i+offsets[k][0], ny=j+offsets[k][1];
-                        if(nx==x && ny==y) count++;
+                    for(int k = 0; k < 8; k++) {
+                        int nx = i + offsets[k][0];
+                        int ny = j + offsets[k][1];
+                        if(nx == x && ny == y) count++;
                     }
                     break;
                 }
@@ -40,31 +41,38 @@ int countAttacksOnSquare(const Position *pos, int x, int y, Color byColor) {
                 case PIECE_ROOK:
                 case PIECE_QUEEN: {
                     int dirs[8][2] = {
-                        {-1,-1},{-1,1},{1,-1},{1,1}, // diagonales
-                        {-1,0},{1,0},{0,-1},{0,1}    // lignes/colonnes
+                        {-1,-1},{-1,1},{1,-1},{1,1},   // diagonales
+                        {-1,0},{1,0},{0,-1},{0,1}      // lignes/colonnes
                     };
-                    int maxDir = (cell.piece == PIECE_BISHOP) ? 4 :
-                                 (cell.piece == PIECE_ROOK) ? 4 : 8;
-                    for(int d=0; d<maxDir; d++){
-                        int dx = dirs[d][0], dy = dirs[d][1];
-                        int nx = i+dx, ny = j+dy;
-                        while(nx>=0 && nx<8 && ny>=0 && ny<8){
+
+                    int startDir = 0, endDir = 8;
+                    if(cell.piece == PIECE_BISHOP) { startDir = 0; endDir = 4; }    // diagonales
+                    else if(cell.piece == PIECE_ROOK) { startDir = 4; endDir = 8; }  // lignes/colonnes
+                    // reine = toutes directions (0-7)
+
+                    for(int d = startDir; d < endDir; d++) {
+                        int dx = dirs[d][0];
+                        int dy = dirs[d][1];
+                        int nx = i + dx;
+                        int ny = j + dy;
+                        while(nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
                             Cell c = pos->board_model[nx][ny];
-                            if(nx==x && ny==y){
+                            if(nx == x && ny == y) {
                                 count++;
                                 break;
                             }
                             if(c.piece != PIECE_NONE) break;
-                            nx+=dx; ny+=dy;
+                            nx += dx;
+                            ny += dy;
                         }
                     }
                     break;
                 }
                 case PIECE_KING: {
-                    for(int dx=-1; dx<=1; dx++){
-                        for(int dy=-1; dy<=1; dy++){
-                            if(dx==0 && dy==0) continue;
-                            if(i+dx==x && j+dy==y) count++;
+                    for(int dx = -1; dx <= 1; dx++) {
+                        for(int dy = -1; dy <= 1; dy++) {
+                            if(dx == 0 && dy == 0) continue;
+                            if(i + dx == x && j + dy == y) count++;
                         }
                     }
                     break;
