@@ -5,12 +5,20 @@
 #include "legal_move/legal_move.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include "../model/game.h"
+#include <stdlib.h>
 
 static int selectedCell[2] = {-1, -1};
-static Position *game = NULL;
 
-void controllerInit(Position *pos) {
-    game = pos;
+static Game *game = NULL;
+
+void init_game() {
+    game = malloc(sizeof(Game));
+    if (!game) return; // gestion d'erreur minimale
+
+    init_position(&game->position);
+    game->whitePlayerType = PLAYER_HUMAN;
+    game->blackPlayerType = PLAYER_HUMAN;
 }
 
 static void resetSelectedCell() {
@@ -24,10 +32,10 @@ static void playSelectedCells(int oI, int oJ, int dI, int dJ) {
         .fromY = oJ,
         .toX   = dI,
         .toY   = dJ,
-        .promotion = 0 // TODO promotion
+        .promotion = 0 // TODO: promotion
     };
 
-    if (!isThisMoveLegal(wantedMove, &game->currentLegalMovesList)) {
+    if (!isThisMoveLegal(wantedMove, &game->position.currentLegalMovesList)) {
         printf("Move illegal\n");
         resetSelectedCell();
         updateRender();
@@ -43,7 +51,7 @@ static void playSelectedCells(int oI, int oJ, int dI, int dJ) {
 }
 
 void selectCell(int i, int j) {
-    if(game->isFinal){
+    if(game->position.isFinal){
         return;
     }
     
@@ -65,7 +73,7 @@ void selectCell(int i, int j) {
     playSelectedCells(selectedCell[0], selectedCell[1], i, j);
 }
 
-const Position* controllerGetPosition(void) {
+const Game* controllerGetGame(void) {
     return game;
 }
 

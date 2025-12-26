@@ -4,9 +4,7 @@
 #include "controller/main_controller.h"
 
 int main(void) {
-    Position game;
-    init_game(&game);         
-    controllerInit(&game);     
+    init_game();         
     open_window();            
     return 0;
 }
