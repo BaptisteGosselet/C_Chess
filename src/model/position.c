@@ -44,6 +44,8 @@ void init_game(Position *pos) {
     pos->whiteCanQueenCastle = true;
     pos->blackCanKingCastle = true;
     pos->blackCanQueenCastle = true;
+    pos->whitePushedPawn = -1;
+    pos->blackPushedPawn = -1;
 
     init_board(pos);
     updateLegalMoves(pos);
@@ -63,8 +65,10 @@ void updateLegalMoves(Position *pos) {
     );
 }
 
-static void checkMoveIndicator(Position *pos, int oX, int oY) {
-    Cell moved = pos->board_model[oX][oY];
+static void checkMoveIndicator(Position *pos, int oI, int oJ, int dI, int dJ) {
+    pos->whitePushedPawn = -1;
+    pos->blackPushedPawn = -1;
+    Cell moved = pos->board_model[oI][oJ];
 
     if (moved.piece == PIECE_KING) {
         if (moved.color == COLOR_WHITE)
@@ -73,17 +77,29 @@ static void checkMoveIndicator(Position *pos, int oX, int oY) {
             pos->blackCanKingCastle = pos->blackCanQueenCastle = false;
     }
     else if (moved.piece == PIECE_ROOK) {
-        if (oY == 0) {
+        if (oJ == 0) {
             if (moved.color == COLOR_WHITE)
                 pos->whiteCanQueenCastle = false;
             else
                 pos->blackCanQueenCastle = false;
         }
-        else if (oY == 7) {
+        else if (oJ == 7) {
             if (moved.color == COLOR_WHITE)
                 pos->whiteCanKingCastle = false;
             else
                 pos->blackCanKingCastle = false;
+        }
+    }
+    else if(moved.piece == PIECE_PAWN){
+        if (moved.color == COLOR_WHITE){
+            if(oI == 6 && dI == 4){
+                pos->whitePushedPawn = oJ;
+            }
+        }
+        if (moved.color == COLOR_BLACK){
+            if(oI == 1 && dI == 3){
+                pos->blackPushedPawn = dJ;
+            }
         }
     }
 }
@@ -109,7 +125,7 @@ void moveTo(Position *pos, int oX, int oY, int dX, int dY) {
         dX < 0 || dX > 7 || dY < 0 || dY > 7)
         return;
 
-    checkMoveIndicator(pos, oX, oY);
+    checkMoveIndicator(pos, oX, oY, dX, dY);
 
     pos->board_model[dX][dY] = pos->board_model[oX][oY];
     pos->board_model[oX][oY] = EMPTY_CELL;
