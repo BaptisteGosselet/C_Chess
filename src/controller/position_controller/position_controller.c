@@ -2,6 +2,9 @@
 #include "../../model/game.h"
 #include "../legal_move/legal_move.h"
 #include <stdio.h>
+#include "../../gui/gui.h"
+#include "../../model/player_type.h"
+#include "../../ai_player/ai_player.h"
 
 void init_board(Position *pos) {
     pos->board_model[0][0] = (Cell){COLOR_BLACK, PIECE_ROOK};
@@ -129,22 +132,26 @@ static void handleEnPassant(Position *pos, int oJ, int dI, int dJ) {
     }
 }
 
-static PieceType askAPieceToPromoteTo(void) {
-    // TODO : GUI / IA
-    return PIECE_QUEEN;
-}
-
-static void handlePromotion(Position *pos, int dI, int dJ) {
-    Cell moved = pos->board_model[dI][dJ];
-
+static void handlePromotion(Game *game, int row, int col) {
+    Cell moved = game->position.board_model[row][col];
+    
     if (moved.piece != PIECE_PAWN)
         return;
 
-    if (moved.color == COLOR_WHITE && dI == 0)
-        pos->board_model[dI][dJ] = (Cell){COLOR_WHITE, askAPieceToPromoteTo()};
-    else if (moved.color == COLOR_BLACK && dI == 7)
-        pos->board_model[dI][dJ] = (Cell){COLOR_BLACK, askAPieceToPromoteTo()};
+    if (!((moved.color == COLOR_WHITE && row == 0) ||
+        (moved.color == COLOR_BLACK && row == 7)))
+        return;
+
+
+    if ((moved.color == COLOR_WHITE && game->whitePlayerType == PLAYER_HUMAN) ||
+        (moved.color == COLOR_BLACK && game->blackPlayerType == PLAYER_HUMAN)) {
+        awaitPromoteChoiceGUI(&game->position, row, col);
+    }
+    else {
+        game->position.board_model[row][col].piece = aiChoosePieceToPromoteTo(&game->position);
+    }
 }
+
 
 void moveTo(Game *game, int oX, int oY, int dX, int dY) {
     Position *pos = &game->position;
@@ -160,7 +167,7 @@ void moveTo(Game *game, int oX, int oY, int dX, int dY) {
 
     handleCastleRook(pos, oY, dX, dY);
     handleEnPassant(pos, oY, dX, dY);
-    handlePromotion(pos, dX, dY);
+    handlePromotion(game, dX, dY);
 
     changeColorTurn(pos);
     updateLegalMoves(pos);

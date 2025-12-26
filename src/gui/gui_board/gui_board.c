@@ -6,59 +6,12 @@
 #include "../../model/pieces_type.h"
 #include "../../controller/main_controller.h"
 #include "../../controller/legal_move/legal_move.h"
+#include "../pieces_texture/pieces_texture.h"
 
-bool areTexturesLoaded = false;
-
-// Pieces texture
-SDL_Texture *white_pawn_texture   = NULL;
-SDL_Texture *white_rook_texture   = NULL;
-SDL_Texture *white_knight_texture = NULL;
-SDL_Texture *white_bishop_texture = NULL;
-SDL_Texture *white_queen_texture  = NULL;
-SDL_Texture *white_king_texture   = NULL;
-SDL_Texture *black_pawn_texture   = NULL;
-SDL_Texture *black_rook_texture   = NULL;
-SDL_Texture *black_knight_texture = NULL;
-SDL_Texture *black_bishop_texture = NULL;
-SDL_Texture *black_queen_texture  = NULL;
-SDL_Texture *black_king_texture   = NULL;
-
-/**
- * load piece image by filename
- * TODO : une fonction par pièce ?
- */
-SDL_Texture* load_texture(SDL_Renderer *renderer, const char* pieceName) {
-    char file[256]; 
-    snprintf(file, sizeof(file), "%s%s%s", BOARD_PIECES_REPO, pieceName, BOARD_PIECES_FILE_FORMAT);
-    SDL_Surface* surface = IMG_Load(file);
-    if (!surface) {
-        SDL_Log("IMG_Load error: %s", IMG_GetError());
-        return NULL;
-    }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    return texture;
-}
+bool boardClickEnabled = true;
 
 
-void pieces_textures_init(SDL_Renderer *renderer) {     
-    white_pawn_texture   = load_texture(renderer, PAWN_WHITE_ASSET_NAME);
-    white_rook_texture   = load_texture(renderer, ROOK_WHITE_ASSET_NAME);
-    white_knight_texture = load_texture(renderer, KNIGHT_WHITE_ASSET_NAME);
-    white_bishop_texture = load_texture(renderer, BISHOP_WHITE_ASSET_NAME);
-    white_queen_texture  = load_texture(renderer, QUEEN_WHITE_ASSET_NAME);
-    white_king_texture   = load_texture(renderer, KING_WHITE_ASSET_NAME);
-    black_pawn_texture   = load_texture(renderer, PAWN_BLACK_ASSET_NAME);
-    black_rook_texture   = load_texture(renderer, ROOK_BLACK_ASSET_NAME);
-    black_knight_texture = load_texture(renderer, KNIGHT_BLACK_ASSET_NAME);
-    black_bishop_texture = load_texture(renderer, BISHOP_BLACK_ASSET_NAME);
-    black_queen_texture  = load_texture(renderer, QUEEN_BLACK_ASSET_NAME);
-    black_king_texture   = load_texture(renderer, KING_BLACK_ASSET_NAME);
-    areTexturesLoaded = true;
-}
-
-
-void draw_a_piece(SDL_Renderer *renderer, SDL_Texture* piece, int ligne, int col) {
+void draw_a_piece_on_the_board(SDL_Renderer *renderer, SDL_Texture* piece, int ligne, int col) {
     SDL_Rect dest;
     dest.x = BOARD_ORIGIN_X + col * BOARD_CELL_SIZE;
     dest.y = BOARD_ORIGIN_Y + ligne * BOARD_CELL_SIZE;
@@ -118,6 +71,20 @@ void draw_board_cells(SDL_Renderer *renderer){
     }
 }
 
+
+void draw_board_filter(SDL_Renderer *renderer){
+    SDL_Rect filter;
+    filter.x = BOARD_ORIGIN_X;
+    filter.y = BOARD_ORIGIN_Y;
+    filter.w = BOARD_SIZE;   
+    filter.h = BOARD_SIZE;   
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100);
+    SDL_RenderFillRect(renderer, &filter);
+}
+
+
 void draw_board_pieces_from_model(SDL_Renderer *renderer) {
     const Position pos = controllerGetGame()->position;
 
@@ -128,31 +95,31 @@ void draw_board_pieces_from_model(SDL_Renderer *renderer) {
 
             if (cell.color == COLOR_WHITE) {
                 if (cell.piece == PIECE_PAWN)
-                    draw_a_piece(renderer, white_pawn_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, white_pawn_texture, i, j);
                 else if (cell.piece == PIECE_ROOK)
-                    draw_a_piece(renderer, white_rook_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, white_rook_texture, i, j);
                 else if (cell.piece == PIECE_KNIGHT)
-                    draw_a_piece(renderer, white_knight_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, white_knight_texture, i, j);
                 else if (cell.piece == PIECE_BISHOP)
-                    draw_a_piece(renderer, white_bishop_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, white_bishop_texture, i, j);
                 else if (cell.piece == PIECE_QUEEN)
-                    draw_a_piece(renderer, white_queen_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, white_queen_texture, i, j);
                 else if (cell.piece == PIECE_KING)
-                    draw_a_piece(renderer, white_king_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, white_king_texture, i, j);
             }
             else if (cell.color == COLOR_BLACK) {
                 if (cell.piece == PIECE_PAWN)
-                    draw_a_piece(renderer, black_pawn_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, black_pawn_texture, i, j);
                 else if (cell.piece == PIECE_ROOK)
-                    draw_a_piece(renderer, black_rook_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, black_rook_texture, i, j);
                 else if (cell.piece == PIECE_KNIGHT)
-                    draw_a_piece(renderer, black_knight_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, black_knight_texture, i, j);
                 else if (cell.piece == PIECE_BISHOP)
-                    draw_a_piece(renderer, black_bishop_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, black_bishop_texture, i, j);
                 else if (cell.piece == PIECE_QUEEN)
-                    draw_a_piece(renderer, black_queen_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, black_queen_texture, i, j);
                 else if (cell.piece == PIECE_KING)
-                    draw_a_piece(renderer, black_king_texture, i, j);
+                    draw_a_piece_on_the_board(renderer, black_king_texture, i, j);
             }
         }
     }
@@ -160,11 +127,34 @@ void draw_board_pieces_from_model(SDL_Renderer *renderer) {
 
 
 void draw_board(SDL_Renderer *renderer) {
-    if (!areTexturesLoaded) {
+    if (!getAreTexturesLoaded()) {
         pieces_textures_init(renderer);
     }
     draw_board_cells(renderer);
     draw_king_check(renderer);
     draw_highlight_cell(renderer);
     draw_board_pieces_from_model(renderer);
+    if(!boardClickEnabled){
+        draw_board_filter(renderer);
+    }
+}
+
+void setBoardClick(bool b){
+    boardClickEnabled = b;
+}
+
+void handle_board_click(SDL_Event *event) {
+    if (boardClickEnabled) { 
+        if (event->type == SDL_MOUSEBUTTONDOWN) {
+            int x = event->button.x;
+            int y = event->button.y;
+
+            int col = (x - BOARD_ORIGIN_X) / BOARD_CELL_SIZE;
+            int row = (y - BOARD_ORIGIN_Y) / BOARD_CELL_SIZE;
+
+            if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
+                selectCell(row, col);
+            }
+        }
+    }
 }
