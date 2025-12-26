@@ -8,5 +8,7 @@
 
 bool isThisMoveLegal(Move wantedMove, MoveList *movesList);
 void updateAllLegalMoves(Position *pos, Color color, MoveList *movesList);
+int countAttacksOnSquare(Position *pos, int x, int y, Color byColor);
+void addMoveToList(int fromX, int fromY, int toX, int toY, int promotion, MoveList *movesList);
 
 #endif
