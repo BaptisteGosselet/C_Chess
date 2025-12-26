@@ -10,14 +10,10 @@ const Cell EMPTY_CELL = (Cell){COLOR_EMPTY, PIECE_NONE};
 Cell board_model[8][8];
 Color currentColor;
 MoveList currentLegalMovesList;
-bool whiteKingHasMoved;
-bool whiteRookKHasMoved;
-bool whiteRookQHasMoved;
-bool whiteCastle;
-bool blackKingHasMoved;
-bool blackRookKHasMoved;
-bool blackRookQHasMoved;
-bool blackCastle;
+bool whiteCanKingCastle;
+bool whiteCanQueenCastle;
+bool blackCanKingCastle;
+bool blackCanQueenCastle;
 
 
 
@@ -67,14 +63,10 @@ void updateLegalMoves(){
 void init_game(){
     currentColor = COLOR_WHITE;
 
-    whiteKingHasMoved = false;
-    whiteRookKHasMoved = false;
-    whiteRookQHasMoved = false;
-    whiteCastle = false;
-    blackKingHasMoved = false;
-    blackRookKHasMoved = false;
-    blackRookQHasMoved = false;
-    blackCastle = false;
+    whiteCanKingCastle = true; 
+    whiteCanQueenCastle = true;
+    blackCanKingCastle = true;
+    blackCanQueenCastle = true;
 
     init_board();
     updateLegalMoves();
@@ -83,27 +75,27 @@ void init_game(){
 void checkMoveIndicator(int oX, int oY){
     if (board_model[oX][oY].piece == PIECE_KING) {
         if (currentColor == COLOR_WHITE){
-            whiteKingHasMoved = true;
+            whiteCanKingCastle = false;
         }
         else if (currentColor == COLOR_BLACK){
-            blackKingHasMoved = true;
+            blackCanKingCastle = false;
         }
     }
     else if (board_model[oX][oY].piece == PIECE_ROOK) {
         if (oY == 0) {
             if (currentColor == COLOR_WHITE){
-                whiteRookQHasMoved = true;
+                whiteCanQueenCastle = false;
             }
             else if (currentColor == COLOR_BLACK){
-                blackRookQHasMoved = true;
+                blackCanQueenCastle = false;
             }
         }
         else if (oY == 7) {
             if (currentColor == COLOR_WHITE){
-                whiteRookKHasMoved = true;
+                whiteCanKingCastle = false;
             }
             else if (currentColor == COLOR_BLACK){
-                blackRookKHasMoved = true;
+                blackCanKingCastle = false;
             }
         }
     }
@@ -116,36 +108,26 @@ void handleCastleRook(int oY, int dX, int dY){
     if (board_model[dX][dY].piece == PIECE_KING){
         //Petit roque
         if(dY-oY==2){
-            printf("ZZZZZ");
             board_model[dX][dY-1] = board_model[dX][dY+1];
             board_model[dX][dY+1] = EMPTY_CELL;  
             if(board_model[dX][dY].color == COLOR_WHITE){
-                whiteRookKHasMoved = true;
-                whiteKingHasMoved = true;
-                whiteCastle = true;
+                whiteCanKingCastle = false;
             }   
             else if(board_model[dX][dY].color == COLOR_BLACK){
-                blackRookKHasMoved = true;
-                blackKingHasMoved = true;
-                blackCastle = true;
+                blackCanKingCastle = false;
             }   
         } 
     
         // Grand roque
         else if(oY - dY == 2){
-            printf("\nGRAND ROQUE\n");
             board_model[dX][dY+1] = board_model[dX][dY-2];
             board_model[dX][dY-2] = EMPTY_CELL;
 
             if(board_model[dX][dY].color == COLOR_WHITE){
-                whiteRookQHasMoved = true;
-                whiteKingHasMoved = true;
-                whiteCastle = true;
+                whiteCanQueenCastle = false;
             }   
             else if(board_model[dX][dY].color == COLOR_BLACK){
-                blackRookQHasMoved = true;
-                blackKingHasMoved = true;
-                blackCastle = true;
+                blackCanQueenCastle = false;
             }   
         }    
     }

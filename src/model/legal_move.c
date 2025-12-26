@@ -124,16 +124,16 @@ void listQueenMoves(int oI, int oJ, Color color, MoveList* movesList){
 }
 
 void listKingCastleMove(int oI, int oJ, Color color, MoveList* movesList) {
-    if(color == COLOR_WHITE && !whiteKingHasMoved) {
-        // Petit roque (côté roi)
-        if(!whiteRookKHasMoved 
+    if(color == COLOR_WHITE) {
+
+        if(whiteCanKingCastle 
            && board_model[oI][oJ+3].piece == PIECE_ROOK && board_model[oI][oJ+3].color == COLOR_WHITE // tour à sa place
            && board_model[oI][oJ+1].piece == EMPTY_CELL.piece 
            && board_model[oI][oJ+2].piece == EMPTY_CELL.piece) {
             addMoveToList(oI, oJ, oI, oJ+2, 0, movesList);
         }
-        // Grand roque (côté dame)
-        if(!whiteRookQHasMoved
+
+        if(whiteCanQueenCastle
            && board_model[oI][oJ-4].piece == PIECE_ROOK && board_model[oI][oJ-4].color == COLOR_WHITE // tour à sa place
            && board_model[oI][oJ-1].piece == EMPTY_CELL.piece 
            && board_model[oI][oJ-2].piece == EMPTY_CELL.piece 
@@ -142,16 +142,15 @@ void listKingCastleMove(int oI, int oJ, Color color, MoveList* movesList) {
         }
     }
 
-    if(color == COLOR_BLACK && !blackKingHasMoved) {
-        // Petit roque (côté roi)
-        if(!blackRookKHasMoved
+    if(color == COLOR_BLACK) {
+        if(blackCanKingCastle
            && board_model[oI][oJ+3].piece == PIECE_ROOK && board_model[oI][oJ+3].color == COLOR_BLACK
            && board_model[oI][oJ+1].piece == EMPTY_CELL.piece 
            && board_model[oI][oJ+2].piece == EMPTY_CELL.piece) {
             addMoveToList(oI, oJ, oI, oJ+2, 0, movesList);
         }
-        // Grand roque (côté dame)
-        if(!blackRookQHasMoved
+
+        if(blackCanQueenCastle
            && board_model[oI][oJ-4].piece == PIECE_ROOK && board_model[oI][oJ-4].color == COLOR_BLACK
            && board_model[oI][oJ-1].piece == EMPTY_CELL.piece 
            && board_model[oI][oJ-2].piece == EMPTY_CELL.piece 
