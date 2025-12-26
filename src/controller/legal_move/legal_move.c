@@ -253,6 +253,11 @@ void updateAllLegalMoves(Position *pos, Color color, MoveList *movesList) {
         if(!isKingInCheck(pos,color)) addMoveToList(m.fromX,m.fromY,m.toX,m.toY,m.promotion,movesList);
         undoMove(pos,m,captured);
     }
+
+    // Position finale
+    if(movesList->count == 0){
+        pos->isFinal = true;
+    }
 }
 
 bool isThisMoveLegal(Move wantedMove, MoveList *movesList) {
@@ -263,4 +268,3 @@ bool isThisMoveLegal(Move wantedMove, MoveList *movesList) {
     }
     return false;
 }
-

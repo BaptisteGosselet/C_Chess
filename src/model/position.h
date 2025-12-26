@@ -13,11 +13,11 @@ typedef struct {
     Cell board_model[8][8];
     Color currentColor;
     MoveList currentLegalMovesList;
-
     bool whiteCanKingCastle;
     bool whiteCanQueenCastle;
     bool blackCanKingCastle;
     bool blackCanQueenCastle;
+    bool isFinal;
 } Position;
 
 void init_game(Position *pos);
