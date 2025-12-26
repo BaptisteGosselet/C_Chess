@@ -41,12 +41,13 @@ void listPawnMoves(Position *pos, int oI, int oJ, Color color, MoveList *movesLi
 
         // Avancer de deux cases
         int doubleRow = oI + 2 * dir;
-        if (oI == startRow && pos->board_model[doubleRow][oJ].piece == PIECE_NONE) {
+        if (oI == startRow && doubleRow >= 0 && doubleRow <= 7 &&
+            pos->board_model[doubleRow][oJ].piece == PIECE_NONE) {
             addMoveToList(oI, oJ, doubleRow, oJ, 0, movesList);
         }
     }
 
-    // Captures
+    // Captures normales
     for (int dj = -1; dj <= 1; dj += 2) {
         int j = oJ + dj;
         if (j >= 0 && j <= 7) {
@@ -57,7 +58,24 @@ void listPawnMoves(Position *pos, int oI, int oJ, Color color, MoveList *movesLi
         }
     }
 
-    // TODO en passant / promotion
+    // Prise en passant
+    if (color == COLOR_WHITE && oI == 3) {
+        if (oJ - 1 >= 0 && pos->blackPushedPawn == oJ - 1) {
+            addMoveToList(oI, oJ, nextRow, oJ - 1, 0, movesList);
+        }
+        if (oJ + 1 <= 7 && pos->blackPushedPawn == oJ + 1) {
+            addMoveToList(oI, oJ, nextRow, oJ + 1, 0, movesList);
+        }
+    } else if (color == COLOR_BLACK && oI == 4) { // ligne 4 pour les noirs
+        if (oJ - 1 >= 0 && pos->whitePushedPawn == oJ - 1) {
+            addMoveToList(oI, oJ, nextRow, oJ - 1, 0, movesList);
+        }
+        if (oJ + 1 <= 7 && pos->whitePushedPawn == oJ + 1) {
+            addMoveToList(oI, oJ, nextRow, oJ + 1, 0, movesList);
+        }
+    }
+
+    // TODO: promotion
 }
 
 
