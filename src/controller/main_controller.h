@@ -5,6 +5,7 @@
 #include "../model/game.h"
 
 void init_game();
+void destroy_game();
 void controllerInit(Position *pos);
 void selectCell(int i, int j);
 

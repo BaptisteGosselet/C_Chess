@@ -5,6 +5,7 @@
 
 int main(void) {
     init_game();         
-    open_window();            
+    open_window();  
+    destroy_game();          
     return 0;
 }

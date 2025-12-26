@@ -12,7 +12,14 @@ static int selectedCell[2] = {-1, -1};
 
 static Game *game = NULL;
 
+void destroy_game(){
+    free(game);
+}
+
 void init_game() {
+    if(game){
+        destroy_game();
+    }
     game = malloc(sizeof(Game));
     if (!game) return; // gestion d'erreur minimale
 
