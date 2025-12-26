@@ -2,7 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include "../gui_constants.h"
 #include <stdbool.h>
-#include "../../model/board_model.h"
+#include "../../model/position.h"
 #include "../../model/pieces_type.h"
 #include "../../controller/main_controller.h"
 
@@ -99,53 +99,59 @@ void draw_board_cells(SDL_Renderer *renderer){
     }
 }
 
-void draw_board_pieces_from_model(SDL_Renderer *renderer){
-    for(int i=0; i < 8; i++){
-        for(int j=0; j < 8; j++){
-                if (board_model[i][j].color == 0){
-                    if(board_model[i][j].piece == PIECE_PAWN){
-                        draw_a_piece(renderer, white_pawn_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_ROOK){
-                        draw_a_piece(renderer, white_rook_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_KNIGHT){
-                        draw_a_piece(renderer, white_knight_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_BISHOP){
-                        draw_a_piece(renderer, white_bishop_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_QUEEN){
-                        draw_a_piece(renderer, white_queen_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_KING){                        
-                        draw_a_piece(renderer, white_king_texture, i, j);
-                    }
-                }
-                else if (board_model[i][j].color == 1){
-                    if(board_model[i][j].piece == PIECE_PAWN){
-                        draw_a_piece(renderer, black_pawn_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_ROOK){
-                        draw_a_piece(renderer, black_rook_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_KNIGHT){
-                        draw_a_piece(renderer, black_knight_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_BISHOP){
-                        draw_a_piece(renderer, black_bishop_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_QUEEN){
-                        draw_a_piece(renderer, black_queen_texture, i, j);
-                    } else if (board_model[i][j].piece == PIECE_KING){                        
-                        draw_a_piece(renderer, black_king_texture, i, j);
-                    }
-                }
+void draw_board_pieces_from_model(SDL_Renderer *renderer) {
+    const Position *pos = controllerGetPosition();
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+
+            Cell cell = pos->board_model[i][j];
+
+            if (cell.color == COLOR_WHITE) {
+                if (cell.piece == PIECE_PAWN)
+                    draw_a_piece(renderer, white_pawn_texture, i, j);
+                else if (cell.piece == PIECE_ROOK)
+                    draw_a_piece(renderer, white_rook_texture, i, j);
+                else if (cell.piece == PIECE_KNIGHT)
+                    draw_a_piece(renderer, white_knight_texture, i, j);
+                else if (cell.piece == PIECE_BISHOP)
+                    draw_a_piece(renderer, white_bishop_texture, i, j);
+                else if (cell.piece == PIECE_QUEEN)
+                    draw_a_piece(renderer, white_queen_texture, i, j);
+                else if (cell.piece == PIECE_KING)
+                    draw_a_piece(renderer, white_king_texture, i, j);
+            }
+            else if (cell.color == COLOR_BLACK) {
+                if (cell.piece == PIECE_PAWN)
+                    draw_a_piece(renderer, black_pawn_texture, i, j);
+                else if (cell.piece == PIECE_ROOK)
+                    draw_a_piece(renderer, black_rook_texture, i, j);
+                else if (cell.piece == PIECE_KNIGHT)
+                    draw_a_piece(renderer, black_knight_texture, i, j);
+                else if (cell.piece == PIECE_BISHOP)
+                    draw_a_piece(renderer, black_bishop_texture, i, j);
+                else if (cell.piece == PIECE_QUEEN)
+                    draw_a_piece(renderer, black_queen_texture, i, j);
+                else if (cell.piece == PIECE_KING)
+                    draw_a_piece(renderer, black_king_texture, i, j);
+            }
         }
     }
 }
 
-void draw_board(SDL_Renderer *renderer){
-    if(!areTexturesLoaded){
+
+void draw_board(SDL_Renderer *renderer) {
+    if (!areTexturesLoaded) {
         pieces_textures_init(renderer);
     }
+
     draw_board_cells(renderer);
 
-    if(selectedCell[0]!=-1 && selectedCell[1]!=-1){
-        draw_highlight_cell(selectedCell[0], selectedCell[1], renderer);
+    const int *selected = controllerGetSelectedCell();
+    if (selected[0] != -1 && selected[1] != -1) {
+        draw_highlight_cell(selected[0], selected[1], renderer);
     }
 
     draw_board_pieces_from_model(renderer);
-
 }
+

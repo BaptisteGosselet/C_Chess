@@ -1,0 +1,120 @@
+#include "position.h"
+#include "legal_move.h"
+#include <stdio.h>
+
+void init_board(Position *pos) {
+    // Rangée noire (adversaire) en haut
+    pos->board_model[0][0] = (Cell){COLOR_BLACK, PIECE_ROOK};
+    pos->board_model[0][1] = (Cell){COLOR_BLACK, PIECE_KNIGHT};
+    pos->board_model[0][2] = (Cell){COLOR_BLACK, PIECE_BISHOP};
+    pos->board_model[0][3] = (Cell){COLOR_BLACK, PIECE_QUEEN};
+    pos->board_model[0][4] = (Cell){COLOR_BLACK, PIECE_KING};
+    pos->board_model[0][5] = (Cell){COLOR_BLACK, PIECE_BISHOP};
+    pos->board_model[0][6] = (Cell){COLOR_BLACK, PIECE_KNIGHT};
+    pos->board_model[0][7] = (Cell){COLOR_BLACK, PIECE_ROOK};
+
+    for (int i = 0; i < 8; i++)
+        pos->board_model[1][i] = (Cell){COLOR_BLACK, PIECE_PAWN};
+
+    // Cases vides
+    for (int i = 2; i < 6; i++)
+        for (int j = 0; j < 8; j++)
+            pos->board_model[i][j] = EMPTY_CELL;
+
+    // Rangée blanche (joueur) en bas
+    for (int i = 0; i < 8; i++)
+        pos->board_model[6][i] = (Cell){COLOR_WHITE, PIECE_PAWN};
+
+    pos->board_model[7][0] = (Cell){COLOR_WHITE, PIECE_ROOK};
+    pos->board_model[7][1] = (Cell){COLOR_WHITE, PIECE_KNIGHT};
+    pos->board_model[7][2] = (Cell){COLOR_WHITE, PIECE_BISHOP};
+    pos->board_model[7][3] = (Cell){COLOR_WHITE, PIECE_QUEEN};
+    pos->board_model[7][4] = (Cell){COLOR_WHITE, PIECE_KING};
+    pos->board_model[7][5] = (Cell){COLOR_WHITE, PIECE_BISHOP};
+    pos->board_model[7][6] = (Cell){COLOR_WHITE, PIECE_KNIGHT};
+    pos->board_model[7][7] = (Cell){COLOR_WHITE, PIECE_ROOK};
+}
+
+
+void init_game(Position *pos) {
+    pos->currentColor = COLOR_WHITE;
+
+    pos->whiteCanKingCastle = true;
+    pos->whiteCanQueenCastle = true;
+    pos->blackCanKingCastle = true;
+    pos->blackCanQueenCastle = true;
+
+    init_board(pos);
+    updateLegalMoves(pos);
+}
+
+void changeColorTurn(Position *pos) {
+    pos->currentColor = (pos->currentColor == COLOR_WHITE)
+                            ? COLOR_BLACK
+                            : COLOR_WHITE;
+}
+
+void updateLegalMoves(Position *pos) {
+    updateAllLegalMoves(
+        pos,
+        pos->currentColor,
+        &pos->currentLegalMovesList
+    );
+}
+
+static void checkMoveIndicator(Position *pos, int oX, int oY) {
+    Cell moved = pos->board_model[oX][oY];
+
+    if (moved.piece == PIECE_KING) {
+        if (moved.color == COLOR_WHITE)
+            pos->whiteCanKingCastle = pos->whiteCanQueenCastle = false;
+        else
+            pos->blackCanKingCastle = pos->blackCanQueenCastle = false;
+    }
+    else if (moved.piece == PIECE_ROOK) {
+        if (oY == 0) {
+            if (moved.color == COLOR_WHITE)
+                pos->whiteCanQueenCastle = false;
+            else
+                pos->blackCanQueenCastle = false;
+        }
+        else if (oY == 7) {
+            if (moved.color == COLOR_WHITE)
+                pos->whiteCanKingCastle = false;
+            else
+                pos->blackCanKingCastle = false;
+        }
+    }
+}
+
+static void handleCastleRook(Position *pos, int oY, int dX, int dY) {
+    if (pos->board_model[dX][dY].piece != PIECE_KING)
+        return;
+
+    // Petit roque
+    if (dY - oY == 2) {
+        pos->board_model[dX][dY - 1] = pos->board_model[dX][dY + 1];
+        pos->board_model[dX][dY + 1] = EMPTY_CELL;
+    }
+    // Grand roque
+    else if (oY - dY == 2) {
+        pos->board_model[dX][dY + 1] = pos->board_model[dX][dY - 2];
+        pos->board_model[dX][dY - 2] = EMPTY_CELL;
+    }
+}
+
+void moveTo(Position *pos, int oX, int oY, int dX, int dY) {
+    if (oX < 0 || oX > 7 || oY < 0 || oY > 7 ||
+        dX < 0 || dX > 7 || dY < 0 || dY > 7)
+        return;
+
+    checkMoveIndicator(pos, oX, oY);
+
+    pos->board_model[dX][dY] = pos->board_model[oX][oY];
+    pos->board_model[oX][oY] = EMPTY_CELL;
+
+    handleCastleRook(pos, oY, dX, dY);
+
+    changeColorTurn(pos);
+    updateLegalMoves(pos);
+}
