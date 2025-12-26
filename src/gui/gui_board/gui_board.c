@@ -164,7 +164,7 @@ void draw_board(SDL_Renderer *renderer) {
         pieces_textures_init(renderer);
     }
     draw_board_cells(renderer);
-    draw_highlight_cell(renderer);
     draw_king_check(renderer);
+    draw_highlight_cell(renderer);
     draw_board_pieces_from_model(renderer);
 }
