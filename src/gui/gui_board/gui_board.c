@@ -81,10 +81,10 @@ void draw_highlight_cell(SDL_Renderer *renderer){
 }
 
 void draw_king_check(SDL_Renderer *renderer){
-    const Position *pos = controllerGetPosition();
+    const Position pos = controllerGetGame()->position;
     int kingX = -1, kingY = -1;
-    getKingPosition(pos, pos->currentColor, &kingX, &kingY);
-    if (isKingInCheck(pos, pos->currentColor)){
+    getKingPosition(&pos, pos.currentColor, &kingX, &kingY);
+    if (isKingInCheck(&pos, pos.currentColor)){
         SDL_SetRenderDrawColor(renderer, 214, 54, 39, 255);
         SDL_Rect rect;
         rect.x = BOARD_ORIGIN_X + kingY*BOARD_CELL_SIZE;   
@@ -119,12 +119,12 @@ void draw_board_cells(SDL_Renderer *renderer){
 }
 
 void draw_board_pieces_from_model(SDL_Renderer *renderer) {
-    const Position *pos = controllerGetPosition();
+    const Position pos = controllerGetGame()->position;
 
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
 
-            Cell cell = pos->board_model[i][j];
+            Cell cell = pos.board_model[i][j];
 
             if (cell.color == COLOR_WHITE) {
                 if (cell.piece == PIECE_PAWN)
