@@ -5,10 +5,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "pieces_movement/pieces_movement.h"
+#include <string.h> 
+
 /**
  * Retourne combien de fois la case (x, y) est attaquée par la couleur `byColor`
  */
-int countAttacksOnSquare(Position *pos, int x, int y, Color byColor) {
+int countAttacksOnSquare(const Position *pos, int x, int y, Color byColor) {
     int count = 0;
 
     for(int i=0; i<8; i++){
@@ -84,22 +86,90 @@ bool movesEqual(Move a, Move b) {
         && a.promotion == b.promotion;
 }
 
-void addMoveToList(int fromX, int fromY, int toX, int toY, int promotion, MoveList *movesList) {
-    if (movesList->count >= MAX_MOVES) return;
+void traceAddedMove(int fromX, int fromY, int toX, int toY, int promotion, MoveList *movesList){
     printf(
-        "ADD MOVE [%d] : (%d,%d) -> (%d,%d) promotion=%d\n",
-        movesList->count,
-        fromX, fromY,
-        toX, toY,
-        promotion
-    );
-    movesList->moves[movesList->count++] = (Move){
-        .fromX = fromX,
-        .fromY = fromY,
-        .toX = toX,
-        .toY = toY,
-        .promotion = promotion
-    };
+            "ADD MOVE [%d] : (%d,%d) -> (%d,%d) promotion=%d\n",
+            movesList->count,
+            fromX, fromY,
+            toX, toY,
+            promotion
+        );
+}
+
+void initMoveList(MoveList *movesList) {
+    if (!movesList) return;
+    movesList->count = 0;
+    memset(movesList->moves, 0, sizeof(movesList->moves));
+}
+
+void addMoveToList(int fromX, int fromY, int toX, int toY, int promotion, MoveList *movesList) {
+    if (!movesList) return;
+    if (movesList->count >= MAX_MOVES) return;
+
+    Move m = {0};
+    m.fromX = fromX;
+    m.fromY = fromY;
+    m.toX = toX;
+    m.toY = toY;
+    m.promotion = promotion;
+
+    movesList->moves[movesList->count++] = m;
+}
+
+void makeMove(Position *pos, Move move, Cell *captured) {
+    *captured = pos->board_model[move.toX][move.toY];
+    pos->board_model[move.toX][move.toY] = pos->board_model[move.fromX][move.fromY];
+    pos->board_model[move.fromX][move.fromY] = EMPTY_CELL;
+}
+
+void undoMove(Position *pos, Move move, Cell captured) {
+    pos->board_model[move.fromX][move.fromY] = pos->board_model[move.toX][move.toY];
+    pos->board_model[move.toX][move.toY] = captured;
+}
+
+bool isKingInCheck(const Position *pos, Color color) {
+    if (!pos) {
+        return true;
+    }
+
+    int kingX = -1, kingY = -1;
+    bool found = false;
+
+    for (int i = 0; i < 8 && !found; i++) {
+        for (int j = 0; j < 8; j++) {
+            Cell cell = pos->board_model[i][j];
+            if (cell.piece == PIECE_KING && cell.color == color) {
+                kingX = i;
+                kingY = j;
+                found = true;
+                break; // sort de la boucle interne
+            }
+        }
+    }
+
+    if (kingX == -1 || kingY == -1) return true; // roi absent
+
+    Color enemy = (color == COLOR_WHITE) ? COLOR_BLACK : COLOR_WHITE;
+    return countAttacksOnSquare(pos, kingX, kingY, enemy) > 0;
+}
+
+bool getKingPosition(const Position *pos, Color color, int *kingX, int *kingY) {
+    if (!pos || !kingX || !kingY) {
+        return false;
+    }
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            Cell cell = pos->board_model[i][j];
+            if (cell.piece == PIECE_KING && cell.color == color) {
+                *kingX = i;
+                *kingY = j;
+                return true;
+            }
+        }
+    }
+
+    return false; // roi non trouvé
 }
 
 void resetMovesList(MoveList *movesList) {
@@ -107,24 +177,46 @@ void resetMovesList(MoveList *movesList) {
 }
 
 void updateAllLegalMoves(Position *pos, Color color, MoveList *movesList) {
-    resetMovesList(movesList);
+    if (!pos || !movesList) return;
+
+    MoveList pseudo;
+    initMoveList(&pseudo); // initialisation complète du MoveList temporaire
 
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             Cell cell = pos->board_model[i][j];
+            if (cell.color != color) continue;
 
-            if (cell.color == color) {
-                switch (cell.piece) {
-                    case PIECE_PAWN:   listPawnMoves(pos, i, j, color, movesList); break;
-                    case PIECE_ROOK:   listRookMoves(pos, i, j, color, movesList); break;
-                    case PIECE_BISHOP: listBishopMoves(pos, i, j, color, movesList); break;
-                    case PIECE_KNIGHT: listKnightMoves(pos, i, j, color, movesList); break;
-                    case PIECE_QUEEN:  listQueenMoves(pos, i, j, color, movesList); break;
-                    case PIECE_KING:   listKingMoves(pos, i, j, color, movesList); break;
-                    default: break;
-                }
+            switch(cell.piece) {
+                case PIECE_PAWN:   listPawnMoves(pos, i, j, color, &pseudo); break;
+                case PIECE_ROOK:   listRookMoves(pos, i, j, color, &pseudo); break;
+                case PIECE_BISHOP: listBishopMoves(pos, i, j, color, &pseudo); break;
+                case PIECE_KNIGHT: listKnightMoves(pos, i, j, color, &pseudo); break;
+                case PIECE_QUEEN:  listQueenMoves(pos, i, j, color, &pseudo); break;
+                case PIECE_KING:   listKingMoves(pos, i, j, color, &pseudo); break;
+                default: break;
             }
         }
+    }
+
+    // Initialiser le MoveList final
+    initMoveList(movesList);
+
+    // Filtrer les coups qui laissent le roi en échec
+    for (int i = 0; i < pseudo.count; i++) {
+        Move m = pseudo.moves[i];
+        Cell captured = EMPTY_CELL; // initialisé pour sécurité
+        makeMove(pos, m, &captured);
+
+        if (!isKingInCheck(pos, color)) {
+            addMoveToList(m.fromX, m.fromY, m.toX, m.toY, m.promotion, movesList);
+        }
+
+        undoMove(pos, m, captured);
+    }
+
+    if (movesList->count == 0) {
+        pos->isFinal = true;
     }
 }
 

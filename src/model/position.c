@@ -43,6 +43,8 @@ void init_game(Position *pos) {
     pos->whiteCanQueenCastle = true;
     pos->blackCanKingCastle = true;
     pos->blackCanQueenCastle = true;
+    pos->isFinal = false;
+
 
     init_board(pos);
     updateLegalMoves(pos);
@@ -117,4 +119,18 @@ void moveTo(Position *pos, int oX, int oY, int dX, int dY) {
 
     changeColorTurn(pos);
     updateLegalMoves(pos);
+
+    if(pos->isFinal){
+        if(isKingInCheck(pos, pos->currentColor)){
+            if(pos->currentColor == COLOR_WHITE){
+                printf("CHECKMATE : black wins");
+            }
+            else{
+                printf("CHECKMATE : white wins");
+            }
+        }
+        else{
+            printf("DRAW");
+        }
+    }
 }
