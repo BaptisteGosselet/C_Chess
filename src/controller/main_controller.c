@@ -1,7 +1,7 @@
 #include "../gui/gui.h"
 #include "../model/position.h"
 #include "../model/move.h"
-#include "../model/legal_move.h"
+#include "legal_move/legal_move.h"
 #include <stdio.h>
 #include <stdbool.h>
 

@@ -1,5 +1,5 @@
 #include "position.h"
-#include "legal_move.h"
+#include "../controller/legal_move/legal_move.h"
 #include <stdio.h>
 
 void init_board(Position *pos) {

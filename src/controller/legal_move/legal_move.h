@@ -1,9 +1,9 @@
 #ifndef LEGAL_MOVE_H
 #define LEGAL_MOVE_H
 
-#include "move.h"
-#include "position.h"
-#include "color.h"
+#include "../../model/move.h"
+#include "../../model/position.h"
+#include "../../model/color.h"
 #include <stdbool.h>
 
 bool isThisMoveLegal(Move wantedMove, MoveList *movesList);
