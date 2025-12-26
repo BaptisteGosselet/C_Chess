@@ -5,9 +5,21 @@
 #include "gui_constants.h"
 #include "gui_board/gui_board.h"
 #include "../controller/main_controller.h"
+#include "gui_promotion/gui_promotion.h"
 
 SDL_Window* window;
 SDL_Renderer* renderer;
+
+
+bool awaitPromoteChoice = false; 
+typedef struct {
+    Position *position;
+    int cellI;
+    int cellJ;
+} PosToPromote;
+
+PosToPromote posToPromoteInstance = {0}; 
+
 
 /**
  * Close the window
@@ -18,27 +30,21 @@ void close_window(void){
     SDL_Quit();
 }
 
-void handle_board_click(SDL_Event *event) {
-    if (event->type == SDL_MOUSEBUTTONDOWN) {
-        int x = event->button.x;
-        int y = event->button.y;
-
-        int col = (x - BOARD_ORIGIN_X) / BOARD_CELL_SIZE;
-        int row = (y - BOARD_ORIGIN_Y) / BOARD_CELL_SIZE;
-
-        if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
-            selectCell(row, col);
-        }
-    }
-}
-
 void updateRender(void){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
+
     draw_board(renderer);
+
+    if(awaitPromoteChoice){ 
+        int mouse_x, mouse_y;
+        SDL_GetMouseState(&mouse_x, &mouse_y);
+        draw_promote_choice(renderer, mouse_x, mouse_y);
+    }
+
     SDL_RenderPresent(renderer);
 }
+
 
 void open_window(void) {
 
@@ -75,10 +81,27 @@ void open_window(void) {
                 running = 0;
             }
             handle_board_click(&event); 
+            handlePromotePieceClick(&event);
         }
+        updateRender();
         SDL_Delay(16); // Petite pause pour ne pas surcharger le CPU (~60 FPS)
     }
 
     close_window();
 }
 
+void awaitPromoteChoiceGUI(Position *pos, int cellI, int cellJ){
+    awaitPromoteChoice = true;
+    posToPromoteInstance.position = pos;
+    posToPromoteInstance.cellI = cellI;
+    posToPromoteInstance.cellJ = cellJ;
+}
+
+void confirmPromoteChoice(PieceType piece){
+    if(!awaitPromoteChoice) return;
+    posToPromoteInstance.position->board_model[posToPromoteInstance.cellI][posToPromoteInstance.cellJ].piece = piece;
+    awaitPromoteChoice = false;
+    posToPromoteInstance.position = NULL;
+    posToPromoteInstance.cellI = -1;
+    posToPromoteInstance.cellJ = -1;
+}
