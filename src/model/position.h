@@ -18,6 +18,8 @@ typedef struct {
     bool whiteCanQueenCastle;
     bool blackCanKingCastle;
     bool blackCanQueenCastle;
+
+    bool isFinal;
 } Position;
 
 void init_game(Position *pos);

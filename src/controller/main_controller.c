@@ -42,7 +42,10 @@ static void playSelectedCells(int oI, int oJ, int dI, int dJ) {
 }
 
 void selectCell(int i, int j) {
-
+    if(game->isFinal){
+        return;
+    }
+    
     if (selectedCell[0] == -1) {
         selectedCell[0] = i;
         selectedCell[1] = j;

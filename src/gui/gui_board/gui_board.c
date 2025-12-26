@@ -5,6 +5,7 @@
 #include "../../model/position.h"
 #include "../../model/pieces_type.h"
 #include "../../controller/main_controller.h"
+#include "../../controller/legal_move/legal_move.h"
 
 bool areTexturesLoaded = false;
 
@@ -66,14 +67,32 @@ void draw_a_piece(SDL_Renderer *renderer, SDL_Texture* piece, int ligne, int col
     SDL_RenderCopy(renderer, piece, NULL, &dest);
 }
 
-void draw_highlight_cell(int i, int j, SDL_Renderer *renderer){
-    SDL_SetRenderDrawColor(renderer, 130, 151, 105, 255);
-    SDL_Rect rect;
-    rect.x = BOARD_ORIGIN_X + j*BOARD_CELL_SIZE;   
-    rect.y = BOARD_ORIGIN_Y + i*BOARD_CELL_SIZE;  
-    rect.w = BOARD_CELL_SIZE;   
-    rect.h = BOARD_CELL_SIZE;   
-    SDL_RenderFillRect(renderer, &rect);
+void draw_highlight_cell(SDL_Renderer *renderer){
+    const int *selected = controllerGetSelectedCell();
+    if (selected[0] != -1 && selected[1] != -1) {
+        SDL_SetRenderDrawColor(renderer, 130, 151, 105, 255);
+        SDL_Rect rect;
+        rect.x = BOARD_ORIGIN_X + selected[1]*BOARD_CELL_SIZE;   
+        rect.y = BOARD_ORIGIN_Y + selected[0]*BOARD_CELL_SIZE;  
+        rect.w = BOARD_CELL_SIZE;   
+        rect.h = BOARD_CELL_SIZE;   
+        SDL_RenderFillRect(renderer, &rect);
+    }
+}
+
+void draw_king_check(SDL_Renderer *renderer){
+    const Position *pos = controllerGetPosition();
+    int kingX = -1, kingY = -1;
+    getKingPosition(pos, pos->currentColor, &kingX, &kingY);
+    if (isKingInCheck(pos, pos->currentColor)){
+        SDL_SetRenderDrawColor(renderer, 214, 54, 39, 255);
+        SDL_Rect rect;
+        rect.x = BOARD_ORIGIN_X + kingY*BOARD_CELL_SIZE;   
+        rect.y = BOARD_ORIGIN_Y + kingX*BOARD_CELL_SIZE;  
+        rect.w = BOARD_CELL_SIZE;   
+        rect.h = BOARD_CELL_SIZE;   
+        SDL_RenderFillRect(renderer, &rect);
+    }
 }
 
 void draw_board_cells(SDL_Renderer *renderer){
@@ -144,14 +163,8 @@ void draw_board(SDL_Renderer *renderer) {
     if (!areTexturesLoaded) {
         pieces_textures_init(renderer);
     }
-
     draw_board_cells(renderer);
-
-    const int *selected = controllerGetSelectedCell();
-    if (selected[0] != -1 && selected[1] != -1) {
-        draw_highlight_cell(selected[0], selected[1], renderer);
-    }
-
+    draw_highlight_cell(renderer);
+    draw_king_check(renderer);
     draw_board_pieces_from_model(renderer);
 }
-
