@@ -5,18 +5,28 @@
 
 // ** WINDOW SETTINGS **
 #define WINDOW_TITLE "Chess"
+
 #define BOARD_SIZE 800
 #define BOARD_CELL_SIZE (BOARD_SIZE / 8)
-#define WINDOW_X_POS SDL_WINDOWPOS_UNDEFINED
-#define WINDOW_Y_POS SDL_WINDOWPOS_UNDEFINED
-#define WINDOW_WIDTH BOARD_SIZE  //TODO ajouter la zone de boutons
-#define WINDOW_HEIGHT BOARD_SIZE //TODO ajouter la zone de boutons
 #define BOARD_ORIGIN_X 0
 #define BOARD_ORIGIN_Y 0
+
+#define MENU_WIDTH 400
+#define MENU_HEIGHT BOARD_SIZE
+#define MENU_ORIGIN_X (BOARD_ORIGIN_X+BOARD_SIZE)
+#define MENU_ORIGIN_Y 0
+
+#define WINDOW_X_POS SDL_WINDOWPOS_UNDEFINED
+#define WINDOW_Y_POS SDL_WINDOWPOS_UNDEFINED
+#define WINDOW_WIDTH (BOARD_SIZE+MENU_WIDTH)  
+#define WINDOW_HEIGHT (BOARD_SIZE) 
+
 
 // ** ASSETS SETTINGS **
 #define BOARD_PIECES_REPO "assets/img/pieces/"
 #define BOARD_PIECES_FILE_FORMAT ".svg"
+#define MENU_FONT_FILE "assets/fonts/arial/arial.ttf"
+#define MENU_FONT_SIZE 22
 
 // ** PIECES NAME **
 #define PAWN_WHITE_ASSET_NAME "pawn-w"

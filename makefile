@@ -1,7 +1,7 @@
 # Compilateur et flags
 CC = gcc
 CFLAGS = -Wall -Wextra `sdl2-config --cflags`
-LIBS = `sdl2-config --libs` -lSDL2_image
+LIBS = `sdl2-config --libs` -lSDL2_image -lSDL2_ttf
 
 # Dossier de compilation des objets
 OBJDIR = obj
