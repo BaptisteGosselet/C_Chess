@@ -5,9 +5,19 @@
 #include "gui_menu_coord.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include "../../controller/menu_params_controller/menu_params_controller.h"
 #include "../../controller/main_controller.h"
 #include "../../model/player_type.h"
+
+static char menuMessage[256] = "Bienvenue !";
+
+void setMenuMessage(const char *msg) {
+    if (msg) {
+        strncpy(menuMessage, msg, sizeof(menuMessage) - 1);
+        menuMessage[sizeof(menuMessage) - 1] = '\0';
+    }
+}
 
 bool is_mouse_over_button(int mouse_x, int mouse_y, int x, int y, int w, int h){
     return (mouse_x >= x && mouse_x <= x + w && mouse_y >= y && mouse_y <= y + h);
@@ -39,6 +49,24 @@ void draw_a_button(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int w, 
     SDL_DestroyTexture(textTexture);
 }
 
+void draw_menu_message(SDL_Renderer *renderer, TTF_Font *font) {
+    SDL_Color textColor = {198, 77, 6, 255};
+    
+    SDL_Surface *textSurface = TTF_RenderUTF8_Blended(font, menuMessage, textColor);
+    if (!textSurface) return;
+    
+    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_Rect textRect;
+    textRect.w = textSurface->w;
+    textRect.h = textSurface->h;
+    textRect.x = MESSAGE_OX + (MESSAGE_W - textRect.w) / 2;
+    textRect.y = MESSAGE_OY + (MESSAGE_H - textRect.h) / 2;
+    
+    SDL_FreeSurface(textSurface);
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+    SDL_DestroyTexture(textTexture);
+}
+
 void draw_menu_background(SDL_Renderer *renderer){
     SDL_Rect bg;
     bg.x = MENU_ORIGIN_X;
@@ -48,6 +76,14 @@ void draw_menu_background(SDL_Renderer *renderer){
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 22, 21, 18, 255);
     SDL_RenderFillRect(renderer, &bg);
+}
+
+void draw_undo_button(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int mouse_y) {
+    bool hover = is_mouse_over_button(mouse_x, mouse_y, UNDO_BUTTON_OX, UNDO_BUTTON_OY, 
+                                      UNDO_BUTTON_W, UNDO_BUTTON_H);
+    
+    draw_a_button(renderer, font, UNDO_BUTTON_OX, UNDO_BUTTON_OY, 
+                  UNDO_BUTTON_W, UNDO_BUTTON_H, "Reprise de coup", hover);
 }
 
 void draw_players_type(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int mouse_y){
@@ -83,6 +119,8 @@ void draw_launch_menu(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int m
 
 void draw_menu(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int mouse_y){
     draw_menu_background(renderer);
+    draw_menu_message(renderer, font);
+    draw_undo_button(renderer, font, mouse_x, mouse_y);
     draw_players_type(renderer, font, mouse_x, mouse_y);
     draw_launch_menu(renderer, font, mouse_x, mouse_y);
 }
@@ -92,9 +130,14 @@ void handle_menu_click(SDL_Event *event){
         int mouse_x = event->button.x;
         int mouse_y = event->button.y;
         
+        if(is_mouse_over_button(mouse_x, mouse_y, UNDO_BUTTON_OX, UNDO_BUTTON_OY, 
+                                UNDO_BUTTON_W, UNDO_BUTTON_H)){
+            undoLastMove();
+        }
+        
         if(is_mouse_over_button(mouse_x, mouse_y, PLAYER_TYPE_BUTTON_OX, PLAYER_TYPE_BUTTON_OY, 
                                 PLAYER_TYPE_BUTTON_W, PLAYER_TYPE_BUTTON_H)){
-                                    changeWhitePlayerType();
+            changeWhitePlayerType();
         }
         
         if(is_mouse_over_button(mouse_x, mouse_y, PLAYER_TYPE_BUTTON_OX, PLAYER_TYPE_BUTTON_OY2, 

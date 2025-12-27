@@ -10,6 +10,7 @@
 #include "../model/player_type.h"
 #include "menu_params_controller/menu_params_controller.h"
 #include "../ai_player/ai_player.h"
+#include "../gui/gui_menu/gui_menu.h"
 
 static int selectedCell[2] = {-1, -1};
 static Game *game = NULL;
@@ -29,6 +30,7 @@ void init_game(PlayerType whiteType, PlayerType blackType) {
     init_position(&game->position);
     game->whitePlayerType = whiteType;
     game->blackPlayerType = blackType;
+    game->history.count = 0;
 
     letComputerPlay(game);
 }
@@ -111,4 +113,39 @@ void processComputerPlayIfNeeded() {
         shouldComputerPlay = false;
         letComputerPlay(game);
     }
+}
+
+void undoLastMove() {
+    if (!game || game->history.count == 0) {
+        setMenuMessage("Pas de coup à annuler");
+        return;
+    }
+
+    game->history.count--;
+    HistoryEntry *entry = &game->history.entries[game->history.count];
+    Position *pos = &game->position;
+
+    pos->board_model[entry->move.fromX][entry->move.fromY] = 
+        pos->board_model[entry->move.toX][entry->move.toY];
+    pos->board_model[entry->move.toX][entry->move.toY] = entry->captured;
+
+    pos->whiteCanKingCastle = entry->whiteCanKingCastle;
+    pos->whiteCanQueenCastle = entry->whiteCanQueenCastle;
+    pos->blackCanKingCastle = entry->blackCanKingCastle;
+    pos->blackCanQueenCastle = entry->blackCanQueenCastle;
+    pos->whitePushedPawn = entry->whitePushedPawn;
+    pos->blackPushedPawn = entry->blackPushedPawn;
+    pos->halfmove_clock = entry->halfmove_clock;  // AJOUTEZ CETTE LIGNE
+
+    changeColorTurn(pos);
+    pos->isFinal = false;
+    updateLegalMoves(pos);
+    
+    if (pos->move_count > 0) {
+        pos->move_count--;
+    }
+
+    setMenuMessage("Coup annulé");
+    resetSelectedCell();
+    updateRender();
 }

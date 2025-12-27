@@ -8,5 +8,6 @@
 void draw_board(SDL_Renderer *renderer);
 void handle_board_click(SDL_Event *event);
 void setBoardClick(bool b);
+void setMenuMessage(const char *msg);
 
 #endif 

@@ -6,6 +6,8 @@
 #include "../../model/player_type.h"
 #include "../../ai_player/ai_player.h"
 #include "../main_controller.h"
+#include "../../model/history.h"
+#include "../../gui/gui_menu/gui_menu.h"
 
 void init_board(Position *pos) {
     pos->board_model[0][0] = (Cell){COLOR_BLACK, PIECE_ROOK};
@@ -56,6 +58,8 @@ void init_position(Position *pos) {
     pos->isFinal = false;
     pos->whitePushedPawn = -1;
     pos->blackPushedPawn = -1;
+    pos->move_count = 0;
+    pos->halfmove_clock = 0; 
 
     init_board(pos);
     updateLegalMoves(pos);
@@ -160,38 +164,58 @@ static bool handlePromotion(Game *game, int row, int col) {
 
 void moveTo(Game *game, int oX, int oY, int dX, int dY) {
     Position *pos = &game->position;
-
     if (oX < 0 || oX > 7 || oY < 0 || oY > 7 ||
         dX < 0 || dX > 7 || dY < 0 || dY > 7)
         return;
-
+    if (game->history.count < MAX_HISTORY) {
+        HistoryEntry *entry = &game->history.entries[game->history.count];
+        entry->move = (Move){oX, oY, dX, dY};
+        entry->captured = pos->board_model[dX][dY];
+        entry->whiteCanKingCastle = pos->whiteCanKingCastle;
+        entry->whiteCanQueenCastle = pos->whiteCanQueenCastle;
+        entry->blackCanKingCastle = pos->blackCanKingCastle;
+        entry->blackCanQueenCastle = pos->blackCanQueenCastle;
+        entry->whitePushedPawn = pos->whitePushedPawn;
+        entry->blackPushedPawn = pos->blackPushedPawn;
+        entry->halfmove_clock = pos->halfmove_clock;
+        game->history.count++;
+    }
+    
+    Cell movedPiece = pos->board_model[oX][oY];
+    Cell capturedPiece = pos->board_model[dX][dY];
+    bool isPawnMove = (movedPiece.piece == PIECE_PAWN);
+    bool isCapture = (capturedPiece.piece != PIECE_NONE);
+    
     checkMoveIndicator(pos, oX, oY, dX);
-
     pos->board_model[dX][dY] = pos->board_model[oX][oY];
     pos->board_model[oX][oY] = EMPTY_CELL;
-    pos->move_count = pos->move_count+1;
+    pos->move_count = pos->move_count + 1;
+    
+    if (isPawnMove || isCapture) {
+        pos->halfmove_clock = 0; 
+    } else {
+        pos->halfmove_clock++;
+    }
     
     handleCastleRook(pos, oY, dX, dY);
     handleEnPassant(pos, oY, dX, dY);
     
     bool hasToBePromotedByAnHuman = handlePromotion(game, dX, dY);
-
     changeColorTurn(pos);
     updateLegalMoves(pos);
-
+    
     if (pos->isFinal) {
         if (isKingInCheck(pos, pos->currentColor)) {
-            printf(pos->currentColor == COLOR_WHITE
-                   ? "CHECKMATE : black wins\n"
-                   : "CHECKMATE : white wins\n");
+            setMenuMessage(pos->currentColor == COLOR_WHITE
+                   ? "ÉCHEC ET MAT : les noirs gagnent !"
+                   : "ÉCHEC ET MAT : les blancs gagnent !");
         } else {
-            printf("DRAW\n");
+            setMenuMessage("MATCH NUL !");
         }
     }
-    else if (pos->move_count >= 50){
+    else if (pos->halfmove_clock >= 100) {  // 100 demi-coups = 50 coups complets
         pos->isFinal = true;
-        printf("REGLE DU 50EME COUP !");
-        fflush(stdout);
+        setMenuMessage("MATCH NUL : règle des 50 coups");
     }
     else if (!hasToBePromotedByAnHuman) {
         requestComputerPlay(); 
