@@ -20,6 +20,7 @@ typedef struct {
     bool isFinal;
     int whitePushedPawn;
     int blackPushedPawn;
+    int move_count;
 } Position;
 
 #endif

@@ -85,7 +85,7 @@ void open_window(void) {
 
     updateRender();
 
-    // Boucle d'événements
+// Boucle d'événements
     SDL_Event event;
     int running = 1;
     while (running) {
@@ -97,10 +97,12 @@ void open_window(void) {
             handle_menu_click(&event); 
             handlePromotePieceClick(&event);
         }
+        
+        processComputerPlayIfNeeded(); 
+        
         updateRender();
         SDL_Delay(16);
     }
-
     close_window();
 }
 
