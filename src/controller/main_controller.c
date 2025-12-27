@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include "../model/game.h"
 #include <stdlib.h>
+#include "../model/player_type.h"
+#include "menu_params_controller/menu_params_controller.h"
 
 static int selectedCell[2] = {-1, -1};
 
@@ -16,16 +18,26 @@ void destroy_game(){
     free(game);
 }
 
-void init_game() {
+void init_game(PlayerType whiteType, PlayerType blackType) {
     if(game){
         destroy_game();
     }
     game = malloc(sizeof(Game));
-    if (!game) return; // gestion d'erreur minimale
+    if (!game) return; 
 
     init_position(&game->position);
-    game->whitePlayerType = PLAYER_HUMAN;
-    game->blackPlayerType = PLAYER_HUMAN;
+    game->whitePlayerType = whiteType;
+    game->blackPlayerType = blackType;
+
+    letComputerPlay(game);
+}
+
+void init_params_game(){
+    init_game(paramWhitePlayerType, paramBlackPlayerType);
+}
+
+void init_default_game() {
+    init_game(PLAYER_HUMAN, PLAYER_HUMAN);
 }
 
 static void resetSelectedCell() {

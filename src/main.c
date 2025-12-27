@@ -4,7 +4,7 @@
 #include "controller/main_controller.h"
 
 int main(void) {
-    init_game();         
+    init_default_game();         
     open_window();  
     destroy_game();          
     return 0;

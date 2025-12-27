@@ -152,7 +152,6 @@ static void handlePromotion(Game *game, int row, int col) {
     }
 }
 
-
 void moveTo(Game *game, int oX, int oY, int dX, int dY) {
     Position *pos = &game->position;
 
@@ -179,6 +178,21 @@ void moveTo(Game *game, int oX, int oY, int dX, int dY) {
                    : "CHECKMATE : white wins\n");
         } else {
             printf("DRAW\n");
+        }
+    }
+}
+
+void letComputerPlay(Game *game){
+    if(game->position.currentColor == COLOR_WHITE){
+        if(game->whitePlayerType == PLAYER_COMPUTER){
+            printf("BLANC JOUE\n");   
+            fflush(stdout);
+        }
+    }
+    else{
+        if(game->blackPlayerType == PLAYER_COMPUTER){
+            printf("NOIR JOUE\n");   
+            fflush(stdout);
         }
     }
 }
