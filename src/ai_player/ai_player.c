@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "position_evaluator/position_evaluator.h"
 #include "ai_player_config.h"
+#include "../gui/gui_menu/gui_menu.h"
 
 PieceType aiChoosePieceToPromoteTo(Position *pos){
     if (!pos) return PIECE_QUEEN;
@@ -171,18 +172,13 @@ Move minmaxMove(Game *game, Color color, int depth) {
 void letComputerPlay(Game *game) {
     Color color = game->position.currentColor;
     int playerType = (color == COLOR_WHITE) ? game->whitePlayerType : game->blackPlayerType;
-
-    Move move = getAnEmptyMove();
+    
     if (playerType == PLAYER_COMPUTER) {
-        if(COMPUTER_MODE == COMPUTER_GREEDY){
-            move = greedyMove(game, color);
+        int depth = getAiDifficulty(); 
+        Move move = minmaxMove(game, color, depth);
+        
+        if (move.fromX != -1) {
+            moveTo(game, move.fromX, move.fromY, move.toX, move.toY);
         }
-        else if(COMPUTER_MODE == COMPUTER_MINMAX){
-            move = minmaxMove(game, color, MINMAX_DEPTH);
-        }
-        else {
-            move = getFirstLegalMove(game, color);
-        }
-        moveTo(game, move.fromX, move.fromY, move.toX, move.toY);
     }
 }

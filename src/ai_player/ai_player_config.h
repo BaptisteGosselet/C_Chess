@@ -12,6 +12,5 @@ typedef enum {
 } ComputerType;
 
 #define COMPUTER_MODE COMPUTER_MINMAX
-#define MINMAX_DEPTH 4
 
 #endif

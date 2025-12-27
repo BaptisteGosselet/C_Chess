@@ -11,11 +11,24 @@
 #include "../../model/player_type.h"
 
 static char menuMessage[256] = "Bienvenue !";
+static int aiDifficulty = 3;
+#define MAX_AI_DIFFICULTY 4 
 
 void setMenuMessage(const char *msg) {
     if (msg) {
         strncpy(menuMessage, msg, sizeof(menuMessage) - 1);
         menuMessage[sizeof(menuMessage) - 1] = '\0';
+    }
+}
+
+int getAiDifficulty() {
+    return aiDifficulty;
+}
+
+void cycleAiDifficulty() {
+    aiDifficulty++;
+    if (aiDifficulty > MAX_AI_DIFFICULTY) {
+        aiDifficulty = 1;
     }
 }
 
@@ -78,6 +91,17 @@ void draw_menu_background(SDL_Renderer *renderer){
     SDL_RenderFillRect(renderer, &bg);
 }
 
+void draw_difficulty_button(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int mouse_y) {
+    bool hover = is_mouse_over_button(mouse_x, mouse_y, DIFFICULTY_BUTTON_OX, DIFFICULTY_BUTTON_OY, 
+                                      DIFFICULTY_BUTTON_W, DIFFICULTY_BUTTON_H);
+    
+    char difficultyText[64];
+    snprintf(difficultyText, sizeof(difficultyText), "Niveau de l'ordi : %d", aiDifficulty);
+    
+    draw_a_button(renderer, font, DIFFICULTY_BUTTON_OX, DIFFICULTY_BUTTON_OY, 
+                  DIFFICULTY_BUTTON_W, DIFFICULTY_BUTTON_H, difficultyText, hover);
+}
+
 void draw_undo_button(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int mouse_y) {
     bool hover = is_mouse_over_button(mouse_x, mouse_y, UNDO_BUTTON_OX, UNDO_BUTTON_OY, 
                                       UNDO_BUTTON_W, UNDO_BUTTON_H);
@@ -120,6 +144,7 @@ void draw_launch_menu(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int m
 void draw_menu(SDL_Renderer *renderer, TTF_Font *font, int mouse_x, int mouse_y){
     draw_menu_background(renderer);
     draw_menu_message(renderer, font);
+    draw_difficulty_button(renderer, font, mouse_x, mouse_y);
     draw_undo_button(renderer, font, mouse_x, mouse_y);
     draw_players_type(renderer, font, mouse_x, mouse_y);
     draw_launch_menu(renderer, font, mouse_x, mouse_y);
@@ -129,6 +154,11 @@ void handle_menu_click(SDL_Event *event){
     if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT){
         int mouse_x = event->button.x;
         int mouse_y = event->button.y;
+        
+        if(is_mouse_over_button(mouse_x, mouse_y, DIFFICULTY_BUTTON_OX, DIFFICULTY_BUTTON_OY, 
+                                DIFFICULTY_BUTTON_W, DIFFICULTY_BUTTON_H)){
+            cycleAiDifficulty();
+        }
         
         if(is_mouse_over_button(mouse_x, mouse_y, UNDO_BUTTON_OX, UNDO_BUTTON_OY, 
                                 UNDO_BUTTON_W, UNDO_BUTTON_H)){
