@@ -21,6 +21,7 @@ typedef struct {
     int whitePushedPawn;
     int blackPushedPawn;
     int move_count;
+    int halfmove_clock;
 } Position;
 
 #endif

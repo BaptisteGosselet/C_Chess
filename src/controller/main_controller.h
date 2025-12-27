@@ -12,6 +12,7 @@ void selectCell(int i, int j);
 void letComputerPlayAfterPlayerPromote();
 void requestComputerPlay(void);
 void processComputerPlayIfNeeded(void);
+void undoLastMove(void);
 
 const Game* controllerGetGame(void);
 const int* controllerGetSelectedCell(void);
