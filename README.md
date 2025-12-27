@@ -7,7 +7,16 @@ Avec toutes les règles implémentées (coups réguliers, roques, prise en passa
 
 ## Compilation
 
-Prérequis : SDL2 et SDL2_image.
+### Prérequis 
+
+SDL2, SDL2_image, et SDL2_TTF.
+
+```sh
+sudo apt update
+sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+```
+
+### Lancer le programme
 
 - Utiliser le makefile avec la commande `make` pour compiler et exécuter `c_chess`.
 - Ou lancer le script `compile.sh` qui compile, exécute, puis nettoie les fichiers binaires.

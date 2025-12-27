@@ -6,10 +6,12 @@
 #include "gui_board/gui_board.h"
 #include "../controller/main_controller.h"
 #include "gui_promotion/gui_promotion.h"
+#include "gui_menu/gui_menu.h"
+#include <SDL2/SDL_ttf.h>
 
 SDL_Window* window;
 SDL_Renderer* renderer;
-
+TTF_Font* font;
 
 bool awaitPromoteChoice = false; 
 typedef struct {
@@ -25,6 +27,8 @@ PosToPromote posToPromoteInstance = {0};
  * Close the window
  */
 void close_window(void){
+    TTF_CloseFont(font);
+    TTF_Quit();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -35,6 +39,7 @@ void updateRender(void){
     SDL_RenderClear(renderer);
 
     draw_board(renderer);
+    draw_menu(renderer, font);
 
     if(awaitPromoteChoice){ 
         int mouse_x, mouse_y;
@@ -52,6 +57,13 @@ void open_window(void) {
         SDL_Log("Erreur SDL_Init: %s", SDL_GetError());
         return;
     }
+
+    TTF_Init();
+    font = TTF_OpenFont(MENU_FONT_FILE, MENU_FONT_SIZE);
+    if (!font) {
+        printf("Erreur font: %s\n", TTF_GetError());
+    }
+
 
     window = SDL_CreateWindow(
         WINDOW_TITLE, 

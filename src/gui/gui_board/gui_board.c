@@ -152,7 +152,7 @@ void handle_board_click(SDL_Event *event) {
             int col = (x - BOARD_ORIGIN_X) / BOARD_CELL_SIZE;
             int row = (y - BOARD_ORIGIN_Y) / BOARD_CELL_SIZE;
 
-            if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
+            if (y >= BOARD_ORIGIN_Y && y < (BOARD_ORIGIN_Y+BOARD_SIZE) && x >= BOARD_ORIGIN_X && x < (BOARD_ORIGIN_X+BOARD_SIZE)) {
                 selectCell(row, col);
             }
         }
