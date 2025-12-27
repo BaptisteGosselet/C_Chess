@@ -2,7 +2,7 @@
 
 Un moteur de <a href="https://www.youtube.com/@MarcQuenehen">jeu d'échec</a> développé en C, avec la librairie SDL. </br>
 
-Avec toutes les règles implémentées (coups réguliers, roques, prise en passant, promotion), la gestion de l'historique (reprise de coups, règle des 50 coups), et un joueur ordinateur (algorithmes d'optimisations, inversion du plateau pour le tour des pièces noirs).
+Avec toutes les règles implémentées (coups réguliers, roques, prise en passant, promotion), la gestion de l'historique (reprise de coups, règle des 50 coups), et un joueur ordinateur (algorithmes d'optimisations gloutons et minmax, inversion du plateau pour le tour des pièces noirs).
 
 <img src="./assets/readme/illustration.png" target="_blank" alt="chess_illustration" width="500"/>
 
