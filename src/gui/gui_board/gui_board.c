@@ -14,7 +14,7 @@ static bool shouldFlipBoard() {
     const Game *game = controllerGetGame();
     if (!game) return false;
     
-    return (game->position.currentColor == COLOR_BLACK && 
+    return (game->whitePlayerType == PLAYER_COMPUTER && 
             game->blackPlayerType == PLAYER_HUMAN);
 }
 
