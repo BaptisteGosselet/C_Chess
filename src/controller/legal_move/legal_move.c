@@ -176,7 +176,7 @@ void updateAllLegalMoves(Position *pos, Color color, MoveList *movesList) {
     if (!pos || !movesList) return;
 
     MoveList pseudo;
-    initMoveList(&pseudo); // initialisation complète du MoveList temporaire
+    initMoveList(&pseudo);
 
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -195,13 +195,15 @@ void updateAllLegalMoves(Position *pos, Color color, MoveList *movesList) {
         }
     }
 
-    // Initialiser le MoveList final
     initMoveList(movesList);
+    
+    // RÉINITIALISER isFinal avant de filtrer les coups
+    pos->isFinal = false;
 
     // Filtrer les coups qui laissent le roi en échec
     for (int i = 0; i < pseudo.count; i++) {
         Move m = pseudo.moves[i];
-        Cell captured = EMPTY_CELL; // initialisé pour sécurité
+        Cell captured = EMPTY_CELL;
         makeMove(pos, m, &captured);
 
         if (!isKingInCheck(pos, color)) {
