@@ -14,10 +14,10 @@ void listSlidingMoves(Position *pos, int oI, int oJ, int di, int dj, Color color
         Cell cell = pos->board_model[i][j];
 
         if (cell.piece == PIECE_NONE) {
-            addMoveToList(oI, oJ, i, j, 0, movesList);
+            addMoveToList(oI, oJ, i, j, movesList);
         } else {
             if (cell.color != color) {
-                addMoveToList(oI, oJ, i, j, 0, movesList);
+                addMoveToList(oI, oJ, i, j, movesList);
             }
             break;
         }
@@ -37,13 +37,13 @@ void listPawnMoves(Position *pos, int oI, int oJ, Color color, MoveList *movesLi
 
     // Avancer d'une case
     if (pos->board_model[nextRow][oJ].piece == PIECE_NONE) {
-        addMoveToList(oI, oJ, nextRow, oJ, 0, movesList);
+        addMoveToList(oI, oJ, nextRow, oJ, movesList);
 
         // Avancer de deux cases
         int doubleRow = oI + 2 * dir;
         if (oI == startRow && doubleRow >= 0 && doubleRow <= 7 &&
             pos->board_model[doubleRow][oJ].piece == PIECE_NONE) {
-            addMoveToList(oI, oJ, doubleRow, oJ, 0, movesList);
+            addMoveToList(oI, oJ, doubleRow, oJ, movesList);
         }
     }
 
@@ -53,7 +53,7 @@ void listPawnMoves(Position *pos, int oI, int oJ, Color color, MoveList *movesLi
         if (j >= 0 && j <= 7) {
             Cell target = pos->board_model[nextRow][j];
             if (target.piece != PIECE_NONE && target.color != color) {
-                addMoveToList(oI, oJ, nextRow, j, 0, movesList);
+                addMoveToList(oI, oJ, nextRow, j, movesList);
             }
         }
     }
@@ -61,21 +61,19 @@ void listPawnMoves(Position *pos, int oI, int oJ, Color color, MoveList *movesLi
     // Prise en passant
     if (color == COLOR_WHITE && oI == 3) {
         if (oJ - 1 >= 0 && pos->blackPushedPawn == oJ - 1) {
-            addMoveToList(oI, oJ, nextRow, oJ - 1, 0, movesList);
+            addMoveToList(oI, oJ, nextRow, oJ - 1, movesList);
         }
         if (oJ + 1 <= 7 && pos->blackPushedPawn == oJ + 1) {
-            addMoveToList(oI, oJ, nextRow, oJ + 1, 0, movesList);
+            addMoveToList(oI, oJ, nextRow, oJ + 1, movesList);
         }
     } else if (color == COLOR_BLACK && oI == 4) { // ligne 4 pour les noirs
         if (oJ - 1 >= 0 && pos->whitePushedPawn == oJ - 1) {
-            addMoveToList(oI, oJ, nextRow, oJ - 1, 0, movesList);
+            addMoveToList(oI, oJ, nextRow, oJ - 1, movesList);
         }
         if (oJ + 1 <= 7 && pos->whitePushedPawn == oJ + 1) {
-            addMoveToList(oI, oJ, nextRow, oJ + 1, 0, movesList);
+            addMoveToList(oI, oJ, nextRow, oJ + 1, movesList);
         }
     }
-
-    // TODO: promotion
 }
 
 
@@ -112,7 +110,7 @@ void listKnightMoves(Position *pos, int oI, int oJ, Color color, MoveList *moves
         if (i >= 0 && i <= 7 && j >= 0 && j <= 7) {
             Cell cell = pos->board_model[i][j];
             if (cell.piece == PIECE_NONE || cell.color != color) {
-                addMoveToList(oI, oJ, i, j, 0, movesList);
+                addMoveToList(oI, oJ, i, j, movesList);
             }
         }
     }
@@ -156,7 +154,7 @@ void listKingCastleMove(Position *pos, int oI, int oJ, Color color, MoveList *mo
         }
 
         if(safe) {
-            addMoveToList(oI, oJ, oI, kingEndCol, 0, movesList);
+            addMoveToList(oI, oJ, oI, kingEndCol, movesList);
         }
     }
 }
@@ -167,7 +165,7 @@ void listKingMoves(Position *pos, int oI, int oJ, Color color, MoveList *movesLi
             if (i >= 0 && i <= 7 && j >= 0 && j <= 7 && !(i == oI && j == oJ)) {
                 Cell cell = pos->board_model[i][j];
                 if (cell.piece == PIECE_NONE || cell.color != color) {
-                    addMoveToList(oI, oJ, i, j, 0, movesList);
+                    addMoveToList(oI, oJ, i, j, movesList);
                 }
             }
         }

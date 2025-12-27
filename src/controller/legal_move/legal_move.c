@@ -90,18 +90,7 @@ bool movesEqual(Move a, Move b) {
     return a.fromX == b.fromX
         && a.fromY == b.fromY
         && a.toX   == b.toX
-        && a.toY   == b.toY
-        && a.promotion == b.promotion;
-}
-
-void traceAddedMove(int fromX, int fromY, int toX, int toY, int promotion, MoveList *movesList){
-    printf(
-            "ADD MOVE [%d] : (%d,%d) -> (%d,%d) promotion=%d\n",
-            movesList->count,
-            fromX, fromY,
-            toX, toY,
-            promotion
-        );
+        && a.toY   == b.toY;
 }
 
 void initMoveList(MoveList *movesList) {
@@ -110,7 +99,7 @@ void initMoveList(MoveList *movesList) {
     memset(movesList->moves, 0, sizeof(movesList->moves));
 }
 
-void addMoveToList(int fromX, int fromY, int toX, int toY, int promotion, MoveList *movesList) {
+void addMoveToList(int fromX, int fromY, int toX, int toY, MoveList *movesList) {
     if (!movesList) return;
     if (movesList->count >= MAX_MOVES) return;
 
@@ -119,7 +108,6 @@ void addMoveToList(int fromX, int fromY, int toX, int toY, int promotion, MoveLi
     m.fromY = fromY;
     m.toX = toX;
     m.toY = toY;
-    m.promotion = promotion;
 
     movesList->moves[movesList->count++] = m;
 }
@@ -218,7 +206,7 @@ void updateAllLegalMoves(Position *pos, Color color, MoveList *movesList) {
         makeMove(pos, m, &captured);
 
         if (!isKingInCheck(pos, color)) {
-            addMoveToList(m.fromX, m.fromY, m.toX, m.toY, m.promotion, movesList);
+            addMoveToList(m.fromX, m.fromY, m.toX, m.toY, movesList);
         }
 
         undoMove(pos, m, captured);

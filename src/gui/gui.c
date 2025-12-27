@@ -118,4 +118,5 @@ void confirmPromoteChoice(PieceType piece){
     posToPromoteInstance.position = NULL;
     posToPromoteInstance.cellI = -1;
     posToPromoteInstance.cellJ = -1;
+    letComputerPlayAfterPlayerPromote();
 }
