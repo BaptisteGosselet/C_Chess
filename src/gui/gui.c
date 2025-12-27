@@ -37,13 +37,14 @@ void close_window(void){
 void updateRender(void){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
+    
+    int mouse_x, mouse_y;
+    SDL_GetMouseState(&mouse_x, &mouse_y);
 
     draw_board(renderer);
-    draw_menu(renderer, font);
+    draw_menu(renderer, font, mouse_x, mouse_y);
 
     if(awaitPromoteChoice){ 
-        int mouse_x, mouse_y;
-        SDL_GetMouseState(&mouse_x, &mouse_y);
         draw_promote_choice(renderer, mouse_x, mouse_y);
     }
 
@@ -89,14 +90,15 @@ void open_window(void) {
     int running = 1;
     while (running) {
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {  // L'utilisateur ferme la fenêtre
+            if (event.type == SDL_QUIT) { 
                 running = 0;
             }
             handle_board_click(&event); 
+            handle_menu_click(&event); 
             handlePromotePieceClick(&event);
         }
         updateRender();
-        SDL_Delay(16); // Petite pause pour ne pas surcharger le CPU (~60 FPS)
+        SDL_Delay(16);
     }
 
     close_window();
