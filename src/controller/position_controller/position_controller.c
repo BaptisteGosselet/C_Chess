@@ -5,6 +5,7 @@
 #include "../../gui/gui.h"
 #include "../../model/player_type.h"
 #include "../../ai_player/ai_player.h"
+#include "../main_controller.h"
 
 void init_board(Position *pos) {
     pos->board_model[0][0] = (Cell){COLOR_BLACK, PIECE_ROOK};
@@ -168,8 +169,7 @@ void moveTo(Game *game, int oX, int oY, int dX, int dY) {
 
     pos->board_model[dX][dY] = pos->board_model[oX][oY];
     pos->board_model[oX][oY] = EMPTY_CELL;
-    
-    
+    pos->move_count = pos->move_count+1;
     
     handleCastleRook(pos, oY, dX, dY);
     handleEnPassant(pos, oY, dX, dY);
@@ -188,7 +188,12 @@ void moveTo(Game *game, int oX, int oY, int dX, int dY) {
             printf("DRAW\n");
         }
     }
-    else if(!hasToBePromotedByAnHuman){
-        letComputerPlay(game);
+    else if (pos->move_count >= 50){
+        pos->isFinal = true;
+        printf("REGLE DU 50EME COUP !");
+        fflush(stdout);
+    }
+    else if (!hasToBePromotedByAnHuman) {
+        requestComputerPlay(); 
     }
 }

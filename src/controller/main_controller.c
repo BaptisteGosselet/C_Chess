@@ -12,8 +12,8 @@
 #include "../ai_player/ai_player.h"
 
 static int selectedCell[2] = {-1, -1};
-
 static Game *game = NULL;
+static bool shouldComputerPlay = false;
 
 void destroy_game(){
     free(game);
@@ -100,4 +100,15 @@ const int* controllerGetSelectedCell(void) {
 
 void letComputerPlayAfterPlayerPromote(){
     letComputerPlay(game);
+}
+
+void requestComputerPlay() {
+    shouldComputerPlay = true;
+}
+
+void processComputerPlayIfNeeded() {
+    if (shouldComputerPlay && game && !game->position.isFinal) {
+        shouldComputerPlay = false;
+        letComputerPlay(game);
+    }
 }
