@@ -6,7 +6,6 @@
 typedef struct {
     int fromX, fromY;
     int toX, toY;
-    int promotion; //0=no prom, 1=queen, 2=rook, ...
 } Move;
 
 typedef struct {

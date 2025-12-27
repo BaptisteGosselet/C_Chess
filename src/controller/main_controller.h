@@ -9,6 +9,8 @@ void init_params_game();
 void destroy_game();
 void controllerInit(Position *pos);
 void selectCell(int i, int j);
+void letComputerPlayAfterPlayerPromote();
+
 
 const Game* controllerGetGame(void);
 const int* controllerGetSelectedCell(void);

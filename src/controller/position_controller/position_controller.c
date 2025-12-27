@@ -132,23 +132,28 @@ static void handleEnPassant(Position *pos, int oJ, int dI, int dJ) {
     }
 }
 
-static void handlePromotion(Game *game, int row, int col) {
+/**
+ * return true if the promotion has to be handled by an human
+ */
+static bool handlePromotion(Game *game, int row, int col) {
     Cell moved = game->position.board_model[row][col];
     
     if (moved.piece != PIECE_PAWN)
-        return;
+        return false;
 
     if (!((moved.color == COLOR_WHITE && row == 0) ||
         (moved.color == COLOR_BLACK && row == 7)))
-        return;
+        return false;
 
 
     if ((moved.color == COLOR_WHITE && game->whitePlayerType == PLAYER_HUMAN) ||
         (moved.color == COLOR_BLACK && game->blackPlayerType == PLAYER_HUMAN)) {
         awaitPromoteChoiceGUI(&game->position, row, col);
+        return true;
     }
     else {
         game->position.board_model[row][col].piece = aiChoosePieceToPromoteTo(&game->position);
+        return false;
     }
 }
 
@@ -163,10 +168,13 @@ void moveTo(Game *game, int oX, int oY, int dX, int dY) {
 
     pos->board_model[dX][dY] = pos->board_model[oX][oY];
     pos->board_model[oX][oY] = EMPTY_CELL;
-
+    
+    
+    
     handleCastleRook(pos, oY, dX, dY);
     handleEnPassant(pos, oY, dX, dY);
-    handlePromotion(game, dX, dY);
+    
+    bool hasToBePromotedByAnHuman = handlePromotion(game, dX, dY);
 
     changeColorTurn(pos);
     updateLegalMoves(pos);
@@ -180,19 +188,7 @@ void moveTo(Game *game, int oX, int oY, int dX, int dY) {
             printf("DRAW\n");
         }
     }
-}
-
-void letComputerPlay(Game *game){
-    if(game->position.currentColor == COLOR_WHITE){
-        if(game->whitePlayerType == PLAYER_COMPUTER){
-            printf("BLANC JOUE\n");   
-            fflush(stdout);
-        }
-    }
-    else{
-        if(game->blackPlayerType == PLAYER_COMPUTER){
-            printf("NOIR JOUE\n");   
-            fflush(stdout);
-        }
+    else if(!hasToBePromotedByAnHuman){
+        letComputerPlay(game);
     }
 }

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "../model/player_type.h"
 #include "menu_params_controller/menu_params_controller.h"
+#include "../ai_player/ai_player.h"
 
 static int selectedCell[2] = {-1, -1};
 
@@ -50,8 +51,7 @@ static void playSelectedCells(int oI, int oJ, int dI, int dJ) {
         .fromX = oI,
         .fromY = oJ,
         .toX   = dI,
-        .toY   = dJ,
-        .promotion = 0 // TODO: promotion
+        .toY   = dJ
     };
 
     if (!isThisMoveLegal(wantedMove, &game->position.currentLegalMovesList)) {
@@ -78,14 +78,12 @@ void selectCell(int i, int j) {
         selectedCell[0] = i;
         selectedCell[1] = j;
         updateRender();
-        printf("Case sélectionnée %d,%d\n", i, j);
         return;
     }
 
     if (selectedCell[0] == i && selectedCell[1] == j) {
         resetSelectedCell();
         updateRender();
-        printf("Case annulée %d,%d\n", i, j);
         return;
     }
 
@@ -98,4 +96,8 @@ const Game* controllerGetGame(void) {
 
 const int* controllerGetSelectedCell(void) {
     return selectedCell;
+}
+
+void letComputerPlayAfterPlayerPromote(){
+    letComputerPlay(game);
 }
