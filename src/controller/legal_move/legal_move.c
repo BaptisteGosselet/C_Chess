@@ -113,7 +113,6 @@ void addMoveToList(int fromX, int fromY, int toX, int toY, MoveList *movesList) 
 }
 
 void makeMove(Position *pos, Move move, Cell *captured) {
-    //utiliser moveTo
     *captured = pos->board_model[move.toX][move.toY];
     pos->board_model[move.toX][move.toY] = pos->board_model[move.fromX][move.fromY];
     pos->board_model[move.fromX][move.fromY] = EMPTY_CELL;
