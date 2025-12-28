@@ -1,5 +1,7 @@
 # C_Chess
 
+[![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)](#)
+
 Un moteur de <a href="https://www.youtube.com/@MarcQuenehen">jeu d'échec</a> développé en C, avec la librairie SDL. </br>
 
 Avec toutes les règles implémentées (coups réguliers, roques, prise en passant, promotion), la gestion de l'historique (reprise de coups, règle des 50 coups), et un joueur ordinateur (algorithmes d'optimisations gloutons et minmax, inversion du plateau pour le tour des pièces noirs).
@@ -32,3 +34,4 @@ Commande pratique pour retrouver les erreurs de segmentation :
 ```sh
 valgrind --leak-check=full ./c_chess
 ```
+
